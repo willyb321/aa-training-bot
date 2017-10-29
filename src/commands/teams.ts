@@ -9,13 +9,19 @@ export function teams(message: Discord.Message) {
 	}
 	let split = message.content.split(' ');
 	if (split[1]) {
-		currentStatus.teams = _.chunk(currentStatus.currentUsers, parseInt(split[1].toString()));
-		currentStatus.teamsNumber = parseInt(split[1].toString())
+		console.log(
+			(parseInt(split[1]) / currentStatus.currentUsers.length)
+		)
+		currentStatus.teamsNumber = Math.round(( currentStatus.currentUsers.length / parseInt(split[1])));
+		currentStatus.currentUsers = _.shuffle(currentStatus.currentUsers);
+		currentStatus.teams = _.chunk(currentStatus.currentUsers, currentStatus.teamsNumber);
+		currentStatus.teamsNumber = currentStatus.teams.length;
 	}
 	console.log(currentStatus.teams);
+	console.log(currentStatus.teamsNumber);
 	let teamMessage = `${currentStatus.teamsNumber} Teams:\n\n`;
 	if (!currentStatus.teams) {
-		message.channel.send('Use !teams [number of people on each team] first.');
+		message.channel.send('Use !teams [number of teams] first.');
 		return
 	}
 	currentStatus.teams.forEach((elem, index) => {

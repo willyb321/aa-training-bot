@@ -5,10 +5,12 @@
 // Import modules
 import * as Discord from 'discord.js';
 import * as commands from './commands'
+import * as _ from 'lodash';
 import {db} from './utils';
+
 // Create an instance of a Discord client
 export const client = new Discord.Client();
-
+const {allowedChannels, allowedServers} = require('../config.json');
 // The token of your bot - https://discordapp.com/developers/applications/me
 const token = 'MzcxNDYyMDIxODA5NTY5Nzk0.DM1-ew.yL9HT5A8GrkOEchDmt6mU0NNBq8';
 
@@ -19,7 +21,13 @@ client.on('ready', () => {
 });
 
 // Create an event listener for messages
-client.on('message', message => {
+client.on('message', (message: Discord.Message) => {
+	if (_.indexOf(allowedServers, message.guild.id) === -1) {
+		return
+	}
+	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
+		return
+	}
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
@@ -51,6 +59,11 @@ client.on('message', message => {
 	}
 	if (message.content === '!ready' || message.content === '!r') {
 		// Send "pong" to the same channel
+		commands.ready(message);
+	}
+	if (message.content === '!ir') {
+		// Send "pong" to the same channel
+		commands.instanced(message);
 		commands.ready(message);
 	}
 	if (message.content === '!go') {
