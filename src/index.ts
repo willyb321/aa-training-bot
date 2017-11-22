@@ -87,6 +87,10 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		commands.reset(message);
 	}
+	if (message.content === '!help') {
+		// Send "pong" to the same channel
+		commands.help(message);
+	}
 });
 console.log(commands);
 // Log our bot in
