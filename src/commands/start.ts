@@ -17,5 +17,5 @@ export function start(message) {
 		return;
 	}
 	currentStatus.currentUsers.push(message.author);
-	message.reply(`Training session started. Registered ${message.author.toString()}. Use !reg[ister] to join.`);
+	message.channel.send(`Training session started. Registered ${message.author.toString()}. Use !reg[ister] to join.`);
 }

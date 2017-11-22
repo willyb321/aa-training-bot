@@ -14,10 +14,19 @@ const {allowedChannels, allowedServers} = require('../config.json');
 // The token of your bot - https://discordapp.com/developers/applications/me
 const token = 'MzcxNDYyMDIxODA5NTY5Nzk0.DM1-ew.yL9HT5A8GrkOEchDmt6mU0NNBq8';
 
+process.on('uncaughtException', (err: Error) => {
+	console.log(err);
+});
+
+process.on('unhandledRejection', (err: Error) => {
+	console.log(err);
+});
+
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
+	client.user.setGame('the good stuff')
 });
 
 // Create an event listener for messages
