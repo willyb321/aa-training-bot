@@ -1,5 +1,11 @@
 {
-  "name": "AA-Training-Bot",
+  "name": "elite-pvp-training-bot",
+  "private": true,
+  "description": "Training bot for Elite PVP",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/willyb321/aa-training-bot"
+  },
   "version": "0.0.1",
   "scripts": {
     "start": "node dist/index.js",
@@ -8,18 +14,18 @@
     "build": "tsc"
   },
   "dependencies": {
-    "bufferutil": "^3.0.2",
+    "bufferutil": "^3.0.3",
     "discord.js": "^11.2.1",
     "erlpack": "github:hammerandchisel/erlpack",
     "nedb": "^1.8.0",
     "lodash": "^4.17.4",
-    "typescript": "^2.5.3"
+    "typescript": "^2.7.0-dev.20171121"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.80",
-    "@types/nedb": "^1.8.4",
-    "@types/node": "^8.0.46",
-    "concurrently": "^3.5.0",
+    "@types/lodash": "^4.14.85",
+    "@types/nedb": "^1.8.5",
+    "@types/node": "^8.0.53",
+    "concurrently": "^3.5.1",
     "nodemon": "^1.12.1"
   }
 }
