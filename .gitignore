@@ -132,5 +132,5 @@ dist/
 pilots.db
 ratings.db
 sessions.db
-
+ecosystem.config.js
 config\.json

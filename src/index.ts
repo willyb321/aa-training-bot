@@ -37,6 +37,10 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		commands.register(message);
 	}
+	if (message.content.startsWith('!unregister') || message.content.startsWith('!unreg')) {
+		// Send "pong" to the same channel
+		commands.unregister(message);
+	}
 	if (message.content === '!who') {
 		// Send "pong" to the same channel
 		commands.who(message);
@@ -61,7 +65,7 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		commands.ready(message);
 	}
-	if (message.content === '!ir') {
+	if (message.content.startsWith('!ir')) {
 		// Send "pong" to the same channel
 		commands.instanced(message);
 		commands.ready(message);

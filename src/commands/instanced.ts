@@ -7,6 +7,15 @@ export function instanced(message: Discord.Message) {
 		message.channel.send('No session running!');
 		return;
 	}
+	if (message.mentions.users.array().length >= 1) {
+		message.mentions.users.array().forEach(user => {
+			if (!currentStatus.currentInstanced.find(elem => elem === user)) {
+				currentStatus.currentInstanced.push(user);
+				message.channel.send(`Instanced: ${user.toString()}.`);
+			}
+		});
+		return;
+	}
 	if (currentStatus.currentUsers.find(elem => elem === message.author)) {
 		currentStatus.currentInstanced.push(message.author);
 		currentStatus.currentInstanced = _.uniq(currentStatus.currentInstanced);

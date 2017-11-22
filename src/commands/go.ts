@@ -11,6 +11,10 @@ export function go(message: Discord.Message) {
 		message.channel.send(`Not enough registered users. Need at least 2.`);
 		return
 	}
+	if (!currentStatus.teams) {
+		message.channel.send(`Form some teams first using !teams [number of teams]`);
+		return;
+	}
 	if (currentStatus.currentUsers.length === currentStatus.currentReady.length) {
 		message.channel.send(currentStatus.teamMessage);
 		message.channel.send(`ALERT! All registered users ready. Go Go Go!`);
