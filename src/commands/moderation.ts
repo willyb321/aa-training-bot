@@ -30,7 +30,9 @@ export function noSpamPls(message: Discord.Message) {
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
 	if (config.allowedUsers.includes(message.author.id)) return;
 	config.allowedRoles.forEach(elem => {
-		if (message.member.roles.get(elem)) return;
+		if (message.member.roles.array().find(role => role.id === elem)) {
+			return;
+		}
 	});
 	if (currentStatus.currentSpams[message.author.id].muted === true) { return; }
 	message.mentions.roles.array().forEach(elem => {
