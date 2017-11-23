@@ -9,6 +9,7 @@ import {client} from '../index';
 import {currentStatus} from '../utils';
 import * as leven from 'leven';
 
+const config = require('../../config.json');
 const modChannel = '382662529349976066';
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
@@ -27,6 +28,10 @@ export function modReport(message: Discord.Message) {
 export function noSpamPls(message: Discord.Message) {
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
+	if (config.allowedUsers.includes(message.author.id)) return;
+	config.allowedRoles.forEach(elem => {
+		if (message.member.roles.get(elem)) return;
+	});
 	if (currentStatus.currentSpams[message.author.id].muted === true) { return; }
 	message.mentions.roles.array().forEach(elem => {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
