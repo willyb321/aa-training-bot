@@ -29,7 +29,7 @@ process.on('unhandledRejection', (err: Error) => {
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
-	client.user.setGame('the good stuff');
+	client.user.setGame('in moderation');
 });
 
 // Create an event listener for messages
