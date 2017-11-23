@@ -71,6 +71,7 @@ client.on('message', (message: Discord.Message) => {
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return
 	}
+	message.content = _.deburr(message.content);
 	if (message.content.toLowerCase().startsWith('oof') || message.content.toLowerCase().startsWith('00f') || message.content.toLowerCase().startsWith('0of') || message.content.toLowerCase().startsWith('o0f')) {
 		message.author.createDM()
 			.then(dm => {
