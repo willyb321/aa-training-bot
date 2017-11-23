@@ -30,6 +30,8 @@
     "@types/node": "^8.0.53",
     "concurrently": "^3.5.1",
     "nodemon": "^1.12.1",
+    "tslint": "^5.8.0",
+    "tslint-xo": "^0.3.0",
     "typedoc": "^0.9.0"
   }
 }

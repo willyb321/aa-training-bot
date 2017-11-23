@@ -4,10 +4,10 @@
 /**
  * ignore
  */
-import {currentStatus} from "../utils";
+import {currentStatus} from '../utils';
 import * as _ from 'lodash';
 import * as Discord from 'discord.js';
-import {start} from "./start";
+import {start} from './start';
 
 export function register(message: Discord.Message) {
 	if (!currentStatus.session) {
@@ -26,7 +26,7 @@ export function register(message: Discord.Message) {
 	}
 	if (message.mentions.users.array().length === 0 && !currentStatus.currentUsers.find(elem => elem === message.author)) {
 		currentStatus.currentUsers.push(message.author);
-		message.reply(`Added to the session`);
+		message.reply('Added to the session');
 		return;
 	} else if (currentStatus.currentUsers.find(elem => elem === message.author)) {
 		message.reply('Already in the session.');
@@ -34,5 +34,5 @@ export function register(message: Discord.Message) {
 	}
 	currentStatus.currentUsers = _.uniq(currentStatus.currentUsers);
 	// console.log(currentStatus.currentUsers);
-	message.reply('Added to the session')
+	message.reply('Added to the session');
 }

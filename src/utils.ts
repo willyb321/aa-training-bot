@@ -4,8 +4,7 @@
 /**
  * ignore
  */
-import * as Datastore from "nedb";
-import * as Discord from 'discord.js';
+import * as Datastore from 'nedb';
 
 export interface dbInterface {
 	sessions: Datastore;
@@ -13,8 +12,8 @@ export interface dbInterface {
 }
 
 export const db: dbInterface = {
-	sessions: new Datastore({ filename: './sessions.db', autoload: true }),
-	ratings: new Datastore({ filename: './ratings.db', autoload: true })
+	sessions: new Datastore({filename: './sessions.db', autoload: true}),
+	ratings: new Datastore({filename: './ratings.db', autoload: true})
 };
 
 export const currentStatus = {
@@ -32,8 +31,8 @@ export const currentStatus = {
 export const chunk = (target, size) => {
 	return target.reduce((memo, value, index) => {
 		// Here it comes the only difference
-		if (index % (target.length / size) == 0 && index !== 0) memo.push([]);
+		if (index % (target.length / size) == 0 && index !== 0) { memo.push([]); }
 		memo[memo.length - 1].push(value);
-		return memo
-	}, [[]])
+		return memo;
+	}, [[]]);
 };

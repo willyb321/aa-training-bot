@@ -4,10 +4,9 @@
 /**
  * ignore
  */
-import {chunk, currentStatus} from "../utils";
+import {currentStatus} from '../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
-import {CurriedFunction1} from "lodash";
 
 export function teams(message: Discord.Message) {
 	if (!currentStatus.session) {
@@ -18,7 +17,7 @@ export function teams(message: Discord.Message) {
 		message.reply('Get some more people!');
 		return;
 	}
-	let split = message.content.split(' ');
+	const split = message.content.split(' ');
 	let teamsNumber: number;
 	if (split[1]) {
 		try {
@@ -51,14 +50,14 @@ export function teams(message: Discord.Message) {
 	let teamMessage = `${currentStatus.teamsNumber} Teams:\n\n`;
 	if (!currentStatus.teams) {
 		message.channel.send('Use !teams [number of teams] first.');
-		return
+		return;
 	}
 	currentStatus.teams.forEach((elem, index) => {
 		teamMessage += `Team ${index + 1}:\n`;
 		elem.forEach((user, index) => {
 			teamMessage += `${user.toString()}\n`;
-		})
+		});
 	});
 	currentStatus.teamMessage = teamMessage;
-	message.channel.send(currentStatus.teamMessage)
+	message.channel.send(currentStatus.teamMessage);
 }

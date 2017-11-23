@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {db} from "../utils";
+import {db} from '../utils';
 import * as Discord from 'discord.js';
 
 export function rating(message: Discord.Message) {
@@ -28,5 +28,5 @@ export function rating(message: Discord.Message) {
 		}
 		// Two documents were inserted in the database
 		// newDocs is an array with these documents, augmented with their _id
-	})
+	});
 }

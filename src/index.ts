@@ -7,9 +7,9 @@
 // Import modules
 import 'source-map-support/register';
 import * as Discord from 'discord.js';
-import * as commands from './commands'
+import * as commands from './commands';
 import * as _ from 'lodash';
-import {currentStatus, db} from './utils';
+import {currentStatus} from './utils';
 
 // Create an instance of a Discord client
 export const client = new Discord.Client();
@@ -34,14 +34,14 @@ client.on('ready', () => {
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
-	if (message.author.id === client.user.id) return;
+	if (message.author.id === client.user.id) { return; }
 	if (message.channel.type === 'dm') {
 		commands.modReport(message);
 		currentStatus.currentDms[message.author.id] = message;
 		return;
 	}
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
-		return
+		return;
 	}
 	if (!currentStatus.currentSpams[message.author.id]) {
 		currentStatus.currentSpams[message.author.id] = {
@@ -60,16 +60,16 @@ client.on('message', (message: Discord.Message) => {
 
 	currentStatus.currentSpams[message.author.id].messages.push(message);
 	message.mentions.roles.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
-		currentStatus.currentSpams[message.author.id].roleMentions[elem.id]++
+		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) { currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0; }
+		currentStatus.currentSpams[message.author.id].roleMentions[elem.id]++;
 	});
 	message.mentions.users.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
-		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++
+		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) { currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0; }
+		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
 	commands.noSpamPls(message);
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
-		return
+		return;
 	}
 	message.content = _.deburr(message.content);
 	if (message.content.toLowerCase().startsWith('oof') || message.content.toLowerCase().startsWith('00f') || message.content.toLowerCase().startsWith('0of') || message.content.toLowerCase().startsWith('o0f')) {

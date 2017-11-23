@@ -4,7 +4,7 @@
 /**
  * ignore
  */
-import {db, currentStatus} from '../utils';
+import {currentStatus} from '../utils';
 
 export function reset(message) {
 	if (!currentStatus.session) {
@@ -18,5 +18,5 @@ export function reset(message) {
 	currentStatus.teams = [];
 	currentStatus.teamMessage = '';
 	currentStatus.teamsNumber = 2;
-	message.reply(`Training session stopped. Use !start to start another.`);
+	message.reply('Training session stopped. Use !start to start another.');
 }
