@@ -71,6 +71,13 @@ client.on('message', (message: Discord.Message) => {
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return
 	}
+	if (message.content.toLowerCase().startsWith('oof')) {
+		message.author.createDM()
+			.then(dm => {
+				dm.send('Oof.');
+				message.delete();
+			});
+	}
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
