@@ -18,7 +18,9 @@ export const currentStatus = {
 	teamsNumber: 2,
 	currentInstanced: [],
 	currentReady: [],
-	teamMessage: ''
+	teamMessage: '',
+	currentSpams: {},
+	currentDms: {}
 };
 
 export const chunk = (target, size) => {

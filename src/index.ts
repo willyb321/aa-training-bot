@@ -6,7 +6,7 @@
 import * as Discord from 'discord.js';
 import * as commands from './commands'
 import * as _ from 'lodash';
-import {db} from './utils';
+import {currentStatus, db} from './utils';
 
 // Create an instance of a Discord client
 export const client = new Discord.Client();
@@ -26,11 +26,22 @@ process.on('unhandledRejection', (err: Error) => {
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
-	client.user.setGame('the good stuff')
+	client.user.setGame('the good stuff');
 });
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
+	if (message.author.id === client.user.id) return;
+
+	if (message.channel.type === 'dm') {
+		commands.modReport(message);
+		currentStatus.currentDms[message.author.id] = message;
+		return;
+	}
+	currentStatus.currentSpams[message.author.id] = {
+		message: message.content,
+
+	};
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return
 	}
