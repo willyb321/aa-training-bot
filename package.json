@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "npm run build && concurrently \"tsc -w\" \"nodemon dist/index.js\"",
+    "docs": "typedoc --out docs/ ./src",
     "prestart": "npm run build",
     "build": "tsc"
   },
@@ -26,6 +27,7 @@
     "@types/nedb": "^1.8.5",
     "@types/node": "^8.0.53",
     "concurrently": "^3.5.1",
-    "nodemon": "^1.12.1"
+    "nodemon": "^1.12.1",
+    "typedoc": "^0.9.0"
   }
 }

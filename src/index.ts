@@ -1,7 +1,9 @@
-/*
-  A ping pong bot, whenever you send "ping", it replies "pong".
-*/
-
+/**
+ * @module Index
+ */
+/**
+ * ignore
+ */
 // Import modules
 import * as Discord from 'discord.js';
 import * as commands from './commands'
@@ -12,7 +14,7 @@ import {currentStatus, db} from './utils';
 export const client = new Discord.Client();
 const {allowedChannels, allowedServers} = require('../config.json');
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = 'MzcxNDYyMDIxODA5NTY5Nzk0.DM1-ew.yL9HT5A8GrkOEchDmt6mU0NNBq8';
+const token = require('../config.json').token;
 
 process.on('uncaughtException', (err: Error) => {
 	console.log(err);

@@ -1,6 +1,7 @@
 import {currentStatus} from "../utils";
 import * as Discord from 'discord.js';
 
+
 export function who(message: Discord.Message) {
 	if (!currentStatus.session) {
 		message.channel.send('No session currently running!');

@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import {db, currentStatus} from '../utils';
 
 export function reset(message) {

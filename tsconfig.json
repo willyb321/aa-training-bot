@@ -1,12 +1,16 @@
 {
 	"compilerOptions": {
+		"declaration": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
-		"target": "es6",
-		"sourceMap": true,
+		"target": "es2015",
+		"preserveConstEnums": true,
+		"removeComments": true,
+		"inlineSourceMap": true,
 		"sourceRoot": "src/",
 		"outDir": "dist/"
 	},
+	"include": ["src/**/*"],
 	"exclude": [
 		"node_modules"
 	]

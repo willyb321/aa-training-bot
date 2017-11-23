@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
 import {client} from '../index';

@@ -1,3 +1,9 @@
+/**
+ * @module Utils
+ */
+/**
+ * ignore
+ */
 import * as Datastore from "nedb";
 import * as Discord from 'discord.js';
 

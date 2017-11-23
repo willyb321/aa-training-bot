@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import {db} from "../utils";
 import * as Discord from 'discord.js';
 

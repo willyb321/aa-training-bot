@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 export * from './instanced'
 export * from './rating'
 export * from './ready'

@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import {currentStatus} from "../utils";
 import * as _ from 'lodash';
 import * as Discord from 'discord.js';
