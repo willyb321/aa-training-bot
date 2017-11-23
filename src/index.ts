@@ -5,6 +5,7 @@
  * ignore
  */
 // Import modules
+import 'source-map-support/register';
 import * as Discord from 'discord.js';
 import * as commands from './commands'
 import * as _ from 'lodash';
@@ -34,22 +35,41 @@ client.on('ready', () => {
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
 	if (message.author.id === client.user.id) return;
-
 	if (message.channel.type === 'dm') {
 		commands.modReport(message);
 		currentStatus.currentDms[message.author.id] = message;
 		return;
 	}
-	currentStatus.currentSpams[message.author.id] = {
-		message: message.content,
-
-	};
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return
 	}
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return
 	}
+
+	if (!currentStatus.currentSpams[message.author.id]) {
+		currentStatus.currentSpams[message.author.id] = {
+			messages: [],
+			roleMentions: {},
+			userMentions: {},
+			currentTime: new Date()
+		};
+	}
+	setTimeout(() => {
+		currentStatus.currentSpams[message.author.id].currentTime = new Date();
+	}, 60000);
+
+	currentStatus.currentSpams[message.author.id].messages.push(message);
+	message.mentions.roles.array().forEach(elem => {
+		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
+		currentStatus.currentSpams[message.author.id].roleMentions[elem.id]++
+	});
+	message.mentions.users.array().forEach(elem => {
+		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
+		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++
+	});
+	commands.noSpamPls(message);
+
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
@@ -75,10 +95,10 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		commands.rating(message);
 	}
-    if (message.content.startsWith('!remove')) {
-        // Send "pong" to the same channel
-        commands.remove(message);
-    }
+	if (message.content.startsWith('!remove')) {
+		// Send "pong" to the same channel
+		commands.remove(message);
+	}
 	if (message.content === '!instanced' || message.content === '!i') {
 		// Send "pong" to the same channel
 		commands.instanced(message);
