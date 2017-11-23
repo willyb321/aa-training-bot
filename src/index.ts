@@ -43,20 +43,19 @@ client.on('message', (message: Discord.Message) => {
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return
 	}
-	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
-		return
-	}
-
 	if (!currentStatus.currentSpams[message.author.id]) {
 		currentStatus.currentSpams[message.author.id] = {
 			messages: [],
 			roleMentions: {},
 			userMentions: {},
+			muted: false,
 			currentTime: new Date()
 		};
 	}
+
 	setTimeout(() => {
 		currentStatus.currentSpams[message.author.id].currentTime = new Date();
+		currentStatus.currentSpams[message.author.id].messages = [];
 	}, 60000);
 
 	currentStatus.currentSpams[message.author.id].messages.push(message);
@@ -69,7 +68,9 @@ client.on('message', (message: Discord.Message) => {
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++
 	});
 	commands.noSpamPls(message);
-
+	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
+		return
+	}
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
