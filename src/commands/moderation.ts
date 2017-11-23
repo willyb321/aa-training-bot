@@ -35,6 +35,7 @@ export function noSpamPls(message: Discord.Message) {
 			message.member.addRole(mutedRole, `Spammed roles more than 3 times in 30 seconds`);
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, `Spammed roles more than 3 times in 30 seconds`);
+				currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
 			}, 30000)
 		}
 	});
@@ -45,6 +46,7 @@ export function noSpamPls(message: Discord.Message) {
 			message.member.addRole(mutedRole, `Spammed users more than 3 times in 30 seconds`);
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, `Spammed users more than 3 times in 30 seconds`);
+				currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
 			}, 30000)
 		}
 	})
