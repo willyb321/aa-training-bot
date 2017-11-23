@@ -6,8 +6,8 @@
  */
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
-import {client} from '../index';
-import {currentStatus} from "../utils";
+import { client } from '../index';
+import { currentStatus } from "../utils";
 import * as leven from 'leven';
 
 const modChannel = '382662529349976066';
@@ -82,7 +82,7 @@ const maxBuffer = 5;
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
  */
 function isItSpam(msg: Discord.Message) {
-	if(msg.author.id != client.user.id){
+	if (msg.author.id != client.user.id) {
 		const now = Math.floor(Date.now());
 		authors.push({
 			time: now,
@@ -92,7 +92,9 @@ function isItSpam(msg: Discord.Message) {
 			message: msg.content,
 			author: msg.author.id
 		});
-
+		setTimeout(() => {
+			messagelog = [];
+		}, 60000);
 		// Check how many times the same message has been sent.
 		let msgMatch = 0;
 		for (let i = 0; i < messagelog.length; i++) {
