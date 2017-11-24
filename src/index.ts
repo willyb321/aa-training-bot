@@ -36,6 +36,7 @@ client.on('ready', () => {
 client.on('message', (message: Discord.Message) => {
 	if (message.author.id === client.user.id) { return; }
 	if (message.channel.type === 'dm') {
+		commands.isItOof(message);
 		commands.modReport(message);
 		currentStatus.currentDms[message.author.id] = message;
 		return;
@@ -67,7 +68,10 @@ client.on('message', (message: Discord.Message) => {
 		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) { currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0; }
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
-	commands.isItOof(message);
+	if (commands.isItOof(message)) {
+		commands.noOof(message);
+		return;
+	}
 	commands.noSpamPls(message);
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;

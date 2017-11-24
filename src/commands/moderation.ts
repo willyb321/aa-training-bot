@@ -18,6 +18,10 @@ const botLogId = '383143845841600513';
 
 export function modReport(message: Discord.Message) {
 	const moderatorReports: any = client.guilds.get(guild).channels.get(modChannel);
+	if (isItOof(message)) {
+		noOof(message);
+		return;
+	}
 	if (currentStatus.currentDms[message.author.id] && message.createdTimestamp - currentStatus.currentDms[message.author.id].createdTimestamp < 60000) {
 		message.reply('Not sent. No spam thx.');
 		return;
@@ -28,13 +32,21 @@ export function modReport(message: Discord.Message) {
 const oofs = ['oof', '00f', '0of', 'o0f'];
 export function isItOof(message: Discord.Message) {
 	message.content = _.deburr(message.content);
-	if (_.indexOf(oofs, message.content.toLowerCase()) >= 0) {
-		message.author.createDM()
-			.then(dm => {
-				dm.send('Oof.');
-				message.delete();
-			});
-	}
+	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
+
+}
+
+export function noOof(message: Discord.Message) {
+	message.author.createDM()
+		.then(dm => {
+			dm.send('Oof.');
+			message.delete()
+				.catch(err => {
+					if (err.message === 'Cannot execute action on a DM channel') {
+						return;
+					}
+				})
+		});
 }
 
 export function noSpamPls(message: Discord.Message) {
