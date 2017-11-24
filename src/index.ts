@@ -70,7 +70,6 @@ client.on('message', (message: Discord.Message) => {
 	});
 	if (commands.isItOof(message)) {
 		commands.noOof(message);
-		return;
 	}
 	commands.noSpamPls(message);
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
