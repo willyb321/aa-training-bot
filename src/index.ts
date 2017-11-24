@@ -67,18 +67,16 @@ client.on('message', (message: Discord.Message) => {
 		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) { currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0; }
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
+	commands.isItOof(message);
 	commands.noSpamPls(message);
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;
 	}
-	message.content = _.deburr(message.content);
-	if (message.content.toLowerCase().startsWith('oof') || message.content.toLowerCase().startsWith('00f') || message.content.toLowerCase().startsWith('0of') || message.content.toLowerCase().startsWith('o0f')) {
-		message.author.createDM()
-			.then(dm => {
-				dm.send('Oof.');
-				message.delete();
-			});
-	}
+	//TODO add some replies
+	// if (message.isMentioned(client.user)) {
+	// 	_.shuffle(currentStatus.replies);
+	// 	message.reply(currentStatus.replies[0]);
+	// }
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel

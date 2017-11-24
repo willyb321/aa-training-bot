@@ -15,6 +15,7 @@ export const db: dbInterface = {
 	sessions: new Datastore({filename: './sessions.db', autoload: true}),
 	ratings: new Datastore({filename: './ratings.db', autoload: true})
 };
+let replies = ['nah m90', 'uwot', 'k', 'meh'];
 
 export const currentStatus = {
 	session: false,
@@ -25,7 +26,8 @@ export const currentStatus = {
 	currentReady: [],
 	teamMessage: '',
 	currentSpams: {},
-	currentDms: {}
+	currentDms: {},
+	replies: replies
 };
 
 export const chunk = (target, size) => {
@@ -36,3 +38,4 @@ export const chunk = (target, size) => {
 		return memo;
 	}, [[]]);
 };
+

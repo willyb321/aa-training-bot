@@ -8,6 +8,7 @@ import * as Discord from 'discord.js';
 import {client} from '../index';
 import {currentStatus} from '../utils';
 import * as leven from 'leven';
+import * as _ from "lodash";
 
 const config = require('../../config.json');
 const modChannel = '382662529349976066';
@@ -23,6 +24,17 @@ export function modReport(message: Discord.Message) {
 	}
 	message.react('📧');
 	moderatorReports.send(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``);
+}
+const oofs = ['oof', '00f', '0of', 'o0f'];
+export function isItOof(message: Discord.Message) {
+	message.content = _.deburr(message.content);
+	if (_.indexOf(oofs, message.content.toLowerCase()) >= 0) {
+		message.author.createDM()
+			.then(dm => {
+				dm.send('Oof.');
+				message.delete();
+			});
+	}
 }
 
 export function noSpamPls(message: Discord.Message) {
@@ -67,6 +79,7 @@ export function noSpamPls(message: Discord.Message) {
 function mute(msg: Discord.Message) {
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
+	if (msg.member.roles.get(mutedRole.id)) return;
 	msg.member.addRole(mutedRole, 'Spammed text');
 	botLog.send(`Muting: ${msg.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
 	setTimeout(() => {
@@ -79,8 +92,8 @@ let messagelog = [];
 const maxDuplicatesWarning = 3;
 const interval = 1000;
 const authors = [];
-const warned: any = [];
-const banned: any = [];
+let warned: any = [];
+let banned: any = [];
 const warnBuffer = 3;
 const maxBuffer = 5;
 
@@ -88,7 +101,7 @@ const maxBuffer = 5;
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
  */
 function isItSpam(msg: Discord.Message) {
-	if (msg.author.id === client.user.id) { return; }
+	if (msg.author.id === client.user.id) return;
 	const now = Math.floor(Date.now());
 	authors.push({
 		time: now,
@@ -98,9 +111,6 @@ function isItSpam(msg: Discord.Message) {
 		message: msg.content,
 		author: msg.author.id
 	});
-	setTimeout(() => {
-		messagelog = [];
-	}, 60000);
 	// Check how many times the same message has been sent.
 	let msgMatch = 0;
 	for (let i = 0; i < messagelog.length; i++) {
