@@ -66,7 +66,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 								if (err) {
 									console.log(err);
 								}
-								const voiceDis = voice.playArbitraryInput(`http://localhost:1337/stfu-${newUser.user.username}-concat.mp3`);
+								const voiceDis = voice.playArbitraryInput(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`));
 								voiceDis.setVolume(1);
 								voiceDis.on('start', () => {
 									console.log('start');
