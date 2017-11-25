@@ -9,7 +9,17 @@ import 'source-map-support/register';
 import * as Discord from 'discord.js';
 import * as commands from './commands';
 import * as _ from 'lodash';
+import * as meSpeak from 'mespeak';
+
+meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"))
 import {currentStatus} from './utils';
+import {join} from "path";
+import * as fs from "fs";
+import {PassThrough, Readable, Writable} from "stream";
+import {tmpdir} from "os";
+
+const serve = require('serve');
+const AudioSprite = require('audiosprite-pkg');
 
 // Create an instance of a Discord client
 export const client = new Discord.Client();
@@ -24,6 +34,63 @@ process.on('uncaughtException', (err: Error) => {
 process.on('unhandledRejection', (err: Error) => {
 	console.log(err);
 });
+meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
+meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"), () => {
+});
+const server = serve(tmpdir(), {
+	port: 1337
+});
+const ax3 = ['139931372247580672'];
+client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
+	if (ax3.indexOf(newUser.user.id) >= 0) {
+
+		setTimeout(() => {
+			if (newUser.voiceChannel) {
+				newUser.voiceChannel.join()
+					.then(voice => {
+							const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
+							fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+							let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
+							for (let i = 0; i < 3; i++) {
+								songs = songs.concat(songs);
+							}
+							console.log(songs.length)
+							const as = new AudioSprite();
+							as.inputFile(songs, function(err) {
+								if (err) console.log(err);
+								// .outputFile can also be called many times with different formats
+								as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), { format: 'mp3' }, function(err) {
+									if (err) {
+										console.log(err);
+									}
+									const voiceDis = voice.playArbitraryInput(`http://localhost:1337/stfu-${newUser.user.username}-concat.mp3`);
+									voiceDis.setVolume(1);
+									voiceDis.on('start', () => {
+										console.log('start');
+									});
+									voiceDis.on('end', () => {
+										console.log('test');
+										voice.disconnect();
+``									});
+									voiceDis.on('speaking', (yesorno) => {
+										console.log('test');
+										if (yesorno && voiceDis.time === voiceDis.totalStreamTime) {
+											voice.disconnect();
+										}
+									});
+									voiceDis.on('error', (err) => {
+										console.log(err);
+										// voice.disconnect();
+									})
+								});
+							});
+					}).catch(err => {
+					console.log(err);
+				})
+			}
+		}, _.random(1000, 5000))
+	}
+});
 
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
@@ -34,7 +101,9 @@ client.on('ready', () => {
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
-	if (message.author.id === client.user.id) { return; }
+	if (message.author.id === client.user.id) {
+		return;
+	}
 	if (message.channel.type === 'dm') {
 		commands.isItOof(message);
 		commands.modReport(message);
@@ -61,11 +130,15 @@ client.on('message', (message: Discord.Message) => {
 
 	currentStatus.currentSpams[message.author.id].messages.push(message);
 	message.mentions.roles.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) { currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0; }
+		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) {
+			currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
+		}
 		currentStatus.currentSpams[message.author.id].roleMentions[elem.id]++;
 	});
 	message.mentions.users.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) { currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0; }
+		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) {
+			currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
+		}
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
 	if (commands.isItOof(message)) {
