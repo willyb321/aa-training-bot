@@ -53,11 +53,7 @@ export function noSpamPls(message: Discord.Message) {
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
 	if (config.allowedUsers.includes(message.author.id)) return;
-	config.allowedRoles.forEach(elem => {
-		if (message.member.roles.array().find(role => role.id === elem)) {
-			return;
-		}
-	});
+	if (checkAllowed(message)) return;
 	if (currentStatus.currentSpams[message.author.id].muted === true) { return; }
 	message.mentions.roles.array().forEach(elem => {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
@@ -109,11 +105,17 @@ let banned: any = [];
 const warnBuffer = 3;
 const maxBuffer = 5;
 
+function checkAllowed(msg) {
+	if (config.allowedUsers.includes(msg.author.id)) return true;
+	return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
+}
+
 /**
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
  */
 function isItSpam(msg: Discord.Message) {
 	if (msg.author.id === client.user.id) return;
+	if (checkAllowed(msg)) return;
 	const now = Math.floor(Date.now());
 	authors.push({
 		time: now,

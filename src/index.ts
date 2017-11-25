@@ -40,13 +40,13 @@ meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"), () => {
 const server = serve(tmpdir(), {
 	port: 1337
 });
-const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688'];
+const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
 	if (ax3.indexOf(newUser.user.id) >= 0) {
 		if (client.voiceConnections.array().length > 0) {
 			return;
 		}
-		if (_.random(1, 100) > 50) return;
+		if (_.random(1, 100) > 90) return;
 		setTimeout(() => {
 			if (newUser.voiceChannel) {
 				newUser.voiceChannel.join()
