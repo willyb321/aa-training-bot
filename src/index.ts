@@ -40,61 +40,69 @@ meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"), () => {
 const server = serve(tmpdir(), {
 	port: 1337
 });
-const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328'];
+const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
 	if (ax3.indexOf(newUser.user.id) >= 0) {
 		if (client.voiceConnections.array().length > 0) {
 			return;
 		}
-		if (_.random(1, 100) > 90) return;
+		let newUserChannel = newUser.voiceChannel;
+		if (newUserChannel === undefined) {
+			return;
+		}
+		if (_.random(1, 100) < 90) return;
 		setTimeout(() => {
 			if (newUser.voiceChannel) {
-				newUser.voiceChannel.join()
-					.then(voice => {
-						const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
-						fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-						let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-						for (let i = 0; i < 3; i++) {
-							songs = songs.concat(songs);
+				const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
+				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+				let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
+				for (let i = 0; i < 3; i++) {
+					songs = songs.concat(songs);
+				}
+				console.log(songs.length)
+				const as = new AudioSprite();
+				as.inputFile(songs, function (err) {
+					if (err) console.log(err);
+					// .outputFile can also be called many times with different formats
+					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, function (err) {
+						if (err) {
+							console.log(err);
 						}
-						console.log(songs.length)
-						const as = new AudioSprite();
-						as.inputFile(songs, function (err) {
-							if (err) console.log(err);
-							// .outputFile can also be called many times with different formats
-							as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, function (err) {
-								if (err) {
-									console.log(err);
-								}
-								const voiceDis = voice.playArbitraryInput(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`));
-								voiceDis.setVolume(1);
-								voiceDis.on('start', () => {
-									console.log('start');
-								});
-								voiceDis.on('end', () => {
-									console.log('test');
-									voice.disconnect();
-								});
-								voiceDis.on('speaking', (yesorno) => {
-									console.log('test');
-									setTimeout(() => {
-										voiceDis.end();
-										voice.disconnect();
-									}, 30000);
-								});
-								voiceDis.on('error', (err) => {
-									console.log(err);
-									// voice.disconnect();
-								})
-							});
-						});
-					}).catch(err => {
-					console.log(err);
+						stfu(newUser)
+					});
 				})
 			}
 		}, _.random(1000, 5000))
 	}
 });
+
+function stfu(newUser) {
+	newUser.voiceChannel.join()
+		.then(voice => {
+			const voiceDis = voice.playArbitraryInput(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`));
+			voiceDis.setVolume(1);
+			voiceDis.on('start', () => {
+				console.log('start');
+			});
+			voiceDis.on('end', () => {
+				console.log('test');
+				voice.disconnect();
+			});
+			voiceDis.on('speaking', (yesorno) => {
+				console.log('test');
+				setTimeout(() => {
+					voiceDis.end();
+					voice.disconnect();
+				}, 30000);
+			});
+			voiceDis.on('error', (err) => {
+				console.log(err);
+				// voice.disconnect();
+			})
+		}).catch(err => {
+		console.log(err);
+	})
+}
 
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
