@@ -81,9 +81,6 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 										voiceDis.end();
 										voice.disconnect();
 									}, 30000);
-									if (yesorno && voiceDis.time === voiceDis.totalStreamTime) {
-										voice.disconnect();
-									}
 								});
 								voiceDis.on('error', (err) => {
 									console.log(err);
