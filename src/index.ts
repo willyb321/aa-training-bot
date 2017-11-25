@@ -46,33 +46,37 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 		if (client.voiceConnections.array().length > 0) {
 			return;
 		}
+		let oldUserChannel = oldUser.voiceChannel;
 		let newUserChannel = newUser.voiceChannel;
 		if (newUserChannel === undefined) {
 			return;
 		}
-		if (_.random(1, 100) < 90) return;
-		setTimeout(() => {
-			if (newUser.voiceChannel) {
-				const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
-				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-				let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-				for (let i = 0; i < 3; i++) {
-					songs = songs.concat(songs);
+		if (oldUserChannel === undefined && newUserChannel !== undefined) {
+
+			if (_.random(1, 100) < 90) return;
+			setTimeout(() => {
+				if (newUser.voiceChannel) {
+					const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
+					fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
+					for (let i = 0; i < 3; i++) {
+						songs = songs.concat(songs);
+					}
+					console.log(songs.length)
+					const as = new AudioSprite();
+					as.inputFile(songs, function (err) {
+						if (err) console.log(err);
+						// .outputFile can also be called many times with different formats
+						as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, function (err) {
+							if (err) {
+								console.log(err);
+							}
+							stfu(newUser)
+						});
+					})
 				}
-				console.log(songs.length)
-				const as = new AudioSprite();
-				as.inputFile(songs, function (err) {
-					if (err) console.log(err);
-					// .outputFile can also be called many times with different formats
-					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, function (err) {
-						if (err) {
-							console.log(err);
-						}
-						stfu(newUser)
-					});
-				})
-			}
-		}, _.random(1000, 5000))
+			}, _.random(1000, 5000))
+		}
 	}
 });
 
