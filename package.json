@@ -24,7 +24,7 @@
     "install": "^0.10.2",
     "leven": "^2.1.0",
     "lodash": "^4.17.4",
-    "mespeak": "^2.0.1",
+    "mespeak": "github:willyb321/mespeak",
     "nedb": "^1.8.0",
     "npm": "^5.5.1",
     "opusscript": "0.0.4",
