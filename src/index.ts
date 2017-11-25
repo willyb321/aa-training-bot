@@ -70,9 +70,6 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 								voiceDis.setVolume(1);
 								voiceDis.on('start', () => {
 									console.log('start');
-									setTimeout(() => {
-										voice.disconnect();
-									}, 30000)
 								});
 								voiceDis.on('end', () => {
 									console.log('test');
@@ -80,6 +77,10 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 								});
 								voiceDis.on('speaking', (yesorno) => {
 									console.log('test');
+									setTimeout(() => {
+										voiceDis.end();
+										voice.disconnect();
+									}, 30000);
 									if (yesorno && voiceDis.time === voiceDis.totalStreamTime) {
 										voice.disconnect();
 									}
