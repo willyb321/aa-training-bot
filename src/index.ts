@@ -70,11 +70,11 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 								voiceDis.setVolume(1);
 								voiceDis.on('start', () => {
 									console.log('start');
+									voice.disconnect();
 								});
 								voiceDis.on('end', () => {
 									console.log('test');
 									voice.disconnect();
-									``
 								});
 								voiceDis.on('speaking', (yesorno) => {
 									console.log('test');
