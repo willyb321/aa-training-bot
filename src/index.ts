@@ -70,7 +70,9 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 								voiceDis.setVolume(1);
 								voiceDis.on('start', () => {
 									console.log('start');
-									voice.disconnect();
+									setTimeout(() => {
+										voice.disconnect();
+									}, 30000)
 								});
 								voiceDis.on('end', () => {
 									console.log('test');
