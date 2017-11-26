@@ -9,15 +9,23 @@ import {client} from '../index';
 import {currentStatus} from '../utils';
 import * as leven from 'leven';
 import * as _ from 'lodash';
+import {botLog} from '../utils';
 
 const config = require('../../config.json');
-const modChannel = '382662529349976066';
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
+const oofs = ['oof', '00f', '0of', 'o0f'];
+const messagelog = [];
+const maxDuplicatesWarning = 3;
+const interval = 1000;
+const authors = [];
+const warned: any = [];
+const banned: any = [];
+const warnBuffer = 6;
+const maxBuffer = 8;
 
 export function modReport(message: Discord.Message) {
-	const moderatorReports: any = client.guilds.get(guild).channels.get(modChannel);
 	if (isItOof(message)) {
 		noOof(message);
 		return;
@@ -26,14 +34,15 @@ export function modReport(message: Discord.Message) {
 		message.reply('Not sent. No spam thx.');
 		return;
 	}
-	message.react('📧');
-	moderatorReports.send(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``);
+	message.react('📧')
+		.then(() => {
+			botLog(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``);
+		});
 }
-const oofs = ['oof', '00f', '0of', 'o0f'];
+
 export function isItOof(message: Discord.Message) {
 	message.content = _.deburr(message.content);
 	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
-
 }
 
 export function noOof(message: Discord.Message) {
@@ -51,15 +60,21 @@ export function noOof(message: Discord.Message) {
 
 export function noSpamPls(message: Discord.Message) {
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
-	if (config.allowedUsers.includes(message.author.id)) { return; }
-	if (checkAllowed(message)) { return; }
-	if (currentStatus.currentSpams[message.author.id].muted === true) { return; }
+	if (!mutedRole) return;
+	if (config.allowedUsers.includes(message.author.id)) {
+		return;
+	}
+	if (checkAllowed(message)) {
+		return;
+	}
+	if (currentStatus.currentSpams[message.author.id].muted === true || message.member.roles.get(mutedRole)) {
+		return;
+	}
 	message.mentions.roles.array().forEach(elem => {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog.send(`Muting: ${message.author.tag}\nReason: Spammed roles more than 3 times in 30 seconds\nMute will be removed in 30 seconds.`);
+			botLog(`Muting: ${message.author.tag}\nReason: Spammed roles more than 3 times in 30 seconds\nMute will be removed in 30 seconds.`);
 			message.member.addRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
@@ -72,7 +87,7 @@ export function noSpamPls(message: Discord.Message) {
 		if (currentStatus.currentSpams[message.author.id].userMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog.send(`Muting: ${message.author.tag}\nReason: Spammed users more than 3 times in 30 seconds.\nMute will be removed in 30 seconds.`);
+			botLog(`Muting: ${message.author.tag}\nReason: Spammed users more than 3 times in 30 seconds.\nMute will be removed in 30 seconds.`);
 			message.member.addRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');
@@ -85,28 +100,22 @@ export function noSpamPls(message: Discord.Message) {
 }
 
 function mute(msg: Discord.Message) {
-	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-	if (msg.member.roles.get(mutedRole.id)) { return; }
+	if (msg.member.roles.get(mutedRole.id)) {
+		return;
+	}
 	msg.member.addRole(mutedRole, 'Spammed text');
-	botLog.send(`Muting: ${msg.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
+	botLog(`Muting: ${msg.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
 	setTimeout(() => {
 		msg.member.removeRole(mutedRole, 'Spammed text');
 		currentStatus.currentSpams[msg.author.id].muted = false;
 	}, 30000);
 }
 
-const messagelog = [];
-const maxDuplicatesWarning = 3;
-const interval = 1000;
-const authors = [];
-const warned: any = [];
-const banned: any = [];
-const warnBuffer = 3;
-const maxBuffer = 5;
-
 function checkAllowed(msg) {
-	if (config.allowedUsers.includes(msg.author.id)) { return true; }
+	if (config.allowedUsers.includes(msg.author.id)) {
+		return true;
+	}
 	return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 }
 
@@ -114,8 +123,8 @@ function checkAllowed(msg) {
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
  */
 function isItSpam(msg: Discord.Message) {
-	if (msg.author.id === client.user.id) { return; }
-	if (checkAllowed(msg)) { return; }
+	if (msg.author.id === client.user.id) return;
+	if (checkAllowed(msg)) return;
 	const now = Math.floor(Date.now());
 	authors.push({
 		time: now,

@@ -12,19 +12,15 @@ import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
-import {currentStatus} from './utils';
+import {config, currentStatus} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
 
-const serve = require('serve');
-const AudioSprite = require('audiosprite-pkg');
-
 // Create an instance of a Discord client
 export const client = new Discord.Client();
-const {allowedChannels, allowedServers} = require('../config.json');
+const {allowedChannels, allowedServers, token} = config;
 // The token of your bot - https://discordapp.com/developers/applications/me
-const token = require('../config.json').token;
 
 process.on('uncaughtException', (err: Error) => {
 	console.log(err);
@@ -35,9 +31,6 @@ process.on('unhandledRejection', (err: Error) => {
 });
 meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
-});
-const server = serve(tmpdir(), {
-	port: 1337
 });
 const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
@@ -51,28 +44,15 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 			return;
 		}
 		if (oldUserChannel === undefined && newUserChannel !== undefined) {
-			if (_.random(1, 100) < 90) { return; }
+			if (_.random(1, 100) < 90) return;
 			console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 			setTimeout(() => {
 				if (newUser.voiceChannel) {
 					const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
 					fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)]//, join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-					// for (let i = 0; i < 3; i++) {
-					// 	songs = songs.concat(songs);
-					// }
+					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
 					console.log(songs.length);
-					const as = new AudioSprite();
-					as.inputFile(songs, err => {
-						if (err) { console.log(err); }
-						// .outputFile can also be called many times with different formats
-						as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, err => {
-							if (err) {
-								console.log(err);
-							}
-							stfu(newUser);
-						});
-					});
+					stfu(newUser);
 				}
 			}, _.random(1000, 5000));
 		}
@@ -82,15 +62,13 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 function stfu(newUser) {
 	newUser.voiceChannel.join()
 		.then(voice => {
-			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`)));
-			voiceDis.setVolume(1);
+			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.wav`)));
 			voiceDis.on('start', () => {
 				console.log('Start');
 			});
 			voiceDis.on('end', () => {
 				console.log('End');
 				setTimeout(() => {
-					voiceDis.end();
 					voice.disconnect();
 				}, 10000);
 				voice.disconnect();
@@ -101,9 +79,10 @@ function stfu(newUser) {
 			voiceDis.on('error', err => {
 				console.log(err);
 			});
-		}).catch(err => {
-		console.log(err);
-	});
+		})
+		.catch(err => {
+			console.log(err);
+		});
 }
 
 // The ready event is vital, it means that your bot will only start reacting to information

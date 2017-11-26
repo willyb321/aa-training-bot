@@ -5,6 +5,11 @@
  * ignore
  */
 import * as Datastore from 'nedb';
+import {client} from './index';
+
+export const config = require('../config.json');
+const modChannel = '382662529349976066';
+const guild = '374103486154932234';
 
 export interface dbInterface {
 	sessions: Datastore;
@@ -38,3 +43,10 @@ export const chunk = (target, size) => {
 		return memo;
 	}, [[]]);
 };
+
+export function botLog(message: string) {
+	const moderatorReports: any = client.guilds.get(guild).channels.get(modChannel);
+	if (moderatorReports) {
+		moderatorReports.send(message);
+	}
+}
