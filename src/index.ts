@@ -17,6 +17,7 @@ import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
 
+const AudioSprite = require('audiosprite-pkg');
 // Create an instance of a Discord client
 export const client = new Discord.Client();
 const {allowedChannels, allowedServers, token} = config;
@@ -51,9 +52,18 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 			if (newUser.voiceChannel) {
 				const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
 				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-				let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-				console.log(songs.length);
-				stfu(newUser);
+				const as = new AudioSprite();
+				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
+					if (err) {
+						console.log(err);
+					}
+					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
+						if (err) {
+							console.log(err);
+						}
+						stfu(newUser);
+					});
+				});
 			}
 		}, _.random(1000, 5000));
 	}
@@ -62,7 +72,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 function stfu(newUser) {
 	newUser.voiceChannel.join()
 		.then(voice => {
-			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.wav`)));
+			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.mp3`)));
 			voiceDis.on('start', () => {
 				console.log('Start');
 			});
