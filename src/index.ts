@@ -35,37 +35,48 @@ meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
 const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216', '108273981655642112'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
+	stfuInit(oldUser, newUser, true)
+});
+export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMember, joined?: boolean) {
 	if (client.voiceConnections.array().length > 0) {
 		return;
+	}
+	if (!joined && newUser.voiceChannel !== undefined) {
+		stfuTrue(newUser);
+		return
 	}
 	if (newUser.voiceChannel === undefined) {
 		return;
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
 		if (_.random(1, 100) < 90) return;
-		newUser.user.username = _.escapeRegExp(newUser.user.username);
-		console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
-		botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
-		setTimeout(() => {
-			if (newUser.voiceChannel) {
-				const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
-				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-				const as = new AudioSprite();
-				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
+		stfuTrue(newUser);
+	}
+}
+
+function stfuTrue(newUser: Discord.GuildMember) {
+	newUser.user.username = _.escapeRegExp(newUser.user.username);
+	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
+	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
+	setTimeout(() => {
+		if (newUser.voiceChannel) {
+			const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
+			fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+			const as = new AudioSprite();
+			as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
+				if (err) {
+					console.log(err);
+				}
+				as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
 					if (err) {
 						console.log(err);
 					}
-					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
-						if (err) {
-							console.log(err);
-						}
-						stfu(newUser);
-					});
+					stfu(newUser);
 				});
-			}
-		}, _.random(1000, 5000));
-	}
-});
+			});
+		}
+	}, _.random(1000, 5000));
+}
 
 function stfu(newUser) {
 	if (!newUser || !newUser.voiceChannel) return;
@@ -208,6 +219,10 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content === '!help') {
 		// Send "pong" to the same channel
 		commands.help(message);
+	}
+	if (message.content.startsWith('!stfu')) {
+		// Send "pong" to the same channel
+		commands.stfu(message);
 	}
 });
 console.log(commands);
