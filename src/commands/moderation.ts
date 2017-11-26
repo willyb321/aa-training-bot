@@ -8,7 +8,7 @@ import * as Discord from 'discord.js';
 import {client} from '../index';
 import {currentStatus} from '../utils';
 import * as leven from 'leven';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 const config = require('../../config.json');
 const modChannel = '382662529349976066';
@@ -45,15 +45,15 @@ export function noOof(message: Discord.Message) {
 					if (err.message === 'Cannot execute action on a DM channel') {
 						return;
 					}
-				})
+				});
 		});
 }
 
 export function noSpamPls(message: Discord.Message) {
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
-	if (config.allowedUsers.includes(message.author.id)) return;
-	if (checkAllowed(message)) return;
+	if (config.allowedUsers.includes(message.author.id)) { return; }
+	if (checkAllowed(message)) { return; }
 	if (currentStatus.currentSpams[message.author.id].muted === true) { return; }
 	message.mentions.roles.array().forEach(elem => {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
@@ -87,7 +87,7 @@ export function noSpamPls(message: Discord.Message) {
 function mute(msg: Discord.Message) {
 	const botLog: any = client.guilds.get(guild).channels.get(botLogId);
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-	if (msg.member.roles.get(mutedRole.id)) return;
+	if (msg.member.roles.get(mutedRole.id)) { return; }
 	msg.member.addRole(mutedRole, 'Spammed text');
 	botLog.send(`Muting: ${msg.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
 	setTimeout(() => {
@@ -96,17 +96,17 @@ function mute(msg: Discord.Message) {
 	}, 30000);
 }
 
-let messagelog = [];
+const messagelog = [];
 const maxDuplicatesWarning = 3;
 const interval = 1000;
 const authors = [];
-let warned: any = [];
-let banned: any = [];
+const warned: any = [];
+const banned: any = [];
 const warnBuffer = 3;
 const maxBuffer = 5;
 
 function checkAllowed(msg) {
-	if (config.allowedUsers.includes(msg.author.id)) return true;
+	if (config.allowedUsers.includes(msg.author.id)) { return true; }
 	return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 }
 
@@ -114,8 +114,8 @@ function checkAllowed(msg) {
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
  */
 function isItSpam(msg: Discord.Message) {
-	if (msg.author.id === client.user.id) return;
-	if (checkAllowed(msg)) return;
+	if (msg.author.id === client.user.id) { return; }
+	if (checkAllowed(msg)) { return; }
 	const now = Math.floor(Date.now());
 	authors.push({
 		time: now,

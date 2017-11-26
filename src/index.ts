@@ -11,12 +11,11 @@ import * as commands from './commands';
 import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 
-meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"))
+meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 import {currentStatus} from './utils';
-import {join} from "path";
-import * as fs from "fs";
-import {PassThrough, Readable, Writable} from "stream";
-import {tmpdir} from "os";
+import {join} from 'path';
+import * as fs from 'fs';
+import {tmpdir} from 'os';
 
 const serve = require('serve');
 const AudioSprite = require('audiosprite-pkg');
@@ -35,7 +34,7 @@ process.on('unhandledRejection', (err: Error) => {
 	console.log(err);
 });
 meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
-meSpeak.loadVoice(require("mespeak/voices/en/en-us.json"), () => {
+meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
 const server = serve(tmpdir(), {
 	port: 1337
@@ -46,36 +45,36 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 		if (client.voiceConnections.array().length > 0) {
 			return;
 		}
-		let oldUserChannel = oldUser.voiceChannel;
-		let newUserChannel = newUser.voiceChannel;
+		const oldUserChannel = oldUser.voiceChannel;
+		const newUserChannel = newUser.voiceChannel;
 		if (newUserChannel === undefined) {
 			return;
 		}
 		if (oldUserChannel === undefined && newUserChannel !== undefined) {
-
-			if (_.random(1, 100) < 90) return;
+			if (_.random(1, 100) < 90) { return; }
+			console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 			setTimeout(() => {
 				if (newUser.voiceChannel) {
-					const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: "buffer"});
+					const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
 					fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-					for (let i = 0; i < 3; i++) {
-						songs = songs.concat(songs);
-					}
-					console.log(songs.length)
+					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)]//, join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`), join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
+					// for (let i = 0; i < 3; i++) {
+					// 	songs = songs.concat(songs);
+					// }
+					console.log(songs.length);
 					const as = new AudioSprite();
-					as.inputFile(songs, function (err) {
-						if (err) console.log(err);
+					as.inputFile(songs, err => {
+						if (err) { console.log(err); }
 						// .outputFile can also be called many times with different formats
-						as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, function (err) {
+						as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}-concat.mp3`), {format: 'mp3'}, err => {
 							if (err) {
 								console.log(err);
 							}
-							stfu(newUser)
+							stfu(newUser);
 						});
-					})
+					});
 				}
-			}, _.random(1000, 5000))
+			}, _.random(1000, 5000));
 		}
 	}
 });
@@ -83,7 +82,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 function stfu(newUser) {
 	newUser.voiceChannel.join()
 		.then(voice => {
-			const voiceDis = voice.playArbitraryInput(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`));
+			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`)));
 			voiceDis.setVolume(1);
 			voiceDis.on('start', () => {
 				console.log('start');
@@ -92,20 +91,20 @@ function stfu(newUser) {
 				console.log('test');
 				voice.disconnect();
 			});
-			voiceDis.on('speaking', (yesorno) => {
+			voiceDis.on('speaking', yesorno => {
 				console.log('test');
 				setTimeout(() => {
 					voiceDis.end();
 					voice.disconnect();
 				}, 30000);
 			});
-			voiceDis.on('error', (err) => {
+			voiceDis.on('error', err => {
 				console.log(err);
 				// voice.disconnect();
-			})
+			});
 		}).catch(err => {
 		console.log(err);
-	})
+	});
 }
 
 // The ready event is vital, it means that your bot will only start reacting to information
