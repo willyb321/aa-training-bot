@@ -42,8 +42,9 @@ export const chunk = (target, size) => {
 	}, [[]]);
 };
 
-export function botLog(message: string) {
-	const moderatorReports: any = client.guilds.get(config.paradigmID).channels.get(config.modChannel);
+export function botLog(message: string, modReport?: boolean) {
+	const botLogId = '383143845841600513';
+	const moderatorReports: any = client.guilds.get(config.paradigmID).channels.get((modReport ? config.modChannel : botLogId));
 	if (moderatorReports) {
 		moderatorReports.send(message);
 	}

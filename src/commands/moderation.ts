@@ -36,7 +36,7 @@ export function modReport(message: Discord.Message) {
 	}
 	message.react('📧')
 		.then(() => {
-			botLog(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``);
+			botLog(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``, true);
 		});
 }
 
