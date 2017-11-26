@@ -43,6 +43,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
 		if (_.random(1, 100) < 90) return;
+		newUser.user.username = _.escapeRegExp(newUser.user.username);
 		console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 		botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 		setTimeout(() => {
