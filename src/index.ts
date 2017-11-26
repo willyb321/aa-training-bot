@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
-import {config, currentStatus} from './utils';
+import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
@@ -34,28 +34,28 @@ meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
 const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
-	if (ax3.indexOf(newUser.user.id) >= 0) {
-		if (client.voiceConnections.array().length > 0) {
-			return;
-		}
-		const oldUserChannel = oldUser.voiceChannel;
-		const newUserChannel = newUser.voiceChannel;
-		if (newUserChannel === undefined) {
-			return;
-		}
-		if (oldUserChannel === undefined && newUserChannel !== undefined) {
-			if (_.random(1, 100) < 90) return;
-			console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
-			setTimeout(() => {
-				if (newUser.voiceChannel) {
-					const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
-					fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-					let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
-					console.log(songs.length);
-					stfu(newUser);
-				}
-			}, _.random(1000, 5000));
-		}
+	if (ax3.indexOf(newUser.user.id) === -1) {
+		return;
+	}
+	if (client.voiceConnections.array().length > 0) {
+		return;
+	}
+	if (newUser.voiceChannel === undefined) {
+		return;
+	}
+	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
+		if (_.random(1, 100) < 90) return;
+		console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
+		botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
+		setTimeout(() => {
+			if (newUser.voiceChannel) {
+				const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
+				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+				let songs = [join(tmpdir(), `stfu-${newUser.user.username}.wav`)];
+				console.log(songs.length);
+				stfu(newUser);
+			}
+		}, _.random(1000, 5000));
 	}
 });
 
