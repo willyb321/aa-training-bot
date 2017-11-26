@@ -85,22 +85,21 @@ function stfu(newUser) {
 			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `/stfu-${newUser.user.username}-concat.mp3`)));
 			voiceDis.setVolume(1);
 			voiceDis.on('start', () => {
-				console.log('start');
+				console.log('Start');
 			});
 			voiceDis.on('end', () => {
-				console.log('test');
-				voice.disconnect();
-			});
-			voiceDis.on('speaking', yesorno => {
-				console.log('test');
+				console.log('End');
 				setTimeout(() => {
 					voiceDis.end();
 					voice.disconnect();
-				}, 30000);
+				}, 10000);
+				voice.disconnect();
+			});
+			voiceDis.on('speaking', yesorno => {
+				console.log('Speaking');
 			});
 			voiceDis.on('error', err => {
 				console.log(err);
-				// voice.disconnect();
 			});
 		}).catch(err => {
 		console.log(err);
