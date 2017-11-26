@@ -68,6 +68,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 });
 
 function stfu(newUser) {
+	if (!newUser || !newUser.voiceChannel) return;
 	newUser.voiceChannel.join()
 		.then(voice => {
 			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.mp3`)));
