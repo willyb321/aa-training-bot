@@ -1,5 +1,4 @@
 import * as Discord from 'discord.js';
-import * as _ from 'lodash';
 import {stfuInit} from '../index';
 
 const allowedToSTFU: any = ['374118891854495744', '374118893012385792'];

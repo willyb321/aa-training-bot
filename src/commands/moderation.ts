@@ -16,14 +16,6 @@ const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
 const oofs = ['oof', '00f', '0of', 'o0f'];
-const messagelog = [];
-const maxDuplicatesWarning = 3;
-const interval = 1000;
-const authors = [];
-const warned: any = [];
-const banned: any = [];
-const warnBuffer = 6;
-const maxBuffer = 8;
 
 export function modReport(message: Discord.Message) {
 	if (isItOof(message)) {
@@ -60,7 +52,7 @@ export function noOof(message: Discord.Message) {
 
 export function noSpamPls(message: Discord.Message) {
 	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-	if (!mutedRole) return;
+	if (!mutedRole) { return; }
 	if (config.allowedUsers.includes(message.author.id)) {
 		return;
 	}
@@ -96,79 +88,13 @@ export function noSpamPls(message: Discord.Message) {
 			}, 30000);
 		}
 	});
-	isItSpam(message);
 }
 
-function mute(msg: Discord.Message) {
-	const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-	if (msg.member.roles.get(mutedRole.id)) {
-		return;
-	}
-	msg.member.addRole(mutedRole, 'Spammed text');
-	botLog(`Muting: ${msg.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
-	setTimeout(() => {
-		msg.member.removeRole(mutedRole, 'Spammed text');
-		currentStatus.currentSpams[msg.author.id].muted = false;
-	}, 30000);
-}
-
-function checkAllowed(msg) {
+export function checkAllowed(msg) {
 	if (config.allowedUsers.includes(msg.author.id)) {
 		return true;
 	}
 	return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
-}
-
-/**
- * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
- */
-function isItSpam(msg: Discord.Message) {
-	if (msg.author.id === client.user.id) return;
-	if (checkAllowed(msg)) return;
-	const now = Math.floor(Date.now());
-	authors.push({
-		time: now,
-		author: msg.author.id
-	});
-	messagelog.push({
-		message: msg.content,
-		author: msg.author.id
-	});
-	// Check how many times the same message has been sent.
-	let msgMatch = 0;
-	for (let i = 0; i < messagelog.length; i++) {
-		if (messagelog[i].message == msg.content && (messagelog[i].author == msg.author.id) && (msg.author.id !== client.user.id)) {
-			msgMatch++;
-		}
-	}
-	// Check matched count
-	if (msgMatch === maxDuplicatesWarning && !warned.includes(msg.author.id)) {
-		mute(msg);
-	}
-
-	let matched = 0;
-
-	for (let i = 0; i < authors.length; i++) {
-		if (authors[i].time > now - interval) {
-			matched++;
-			if (matched == warnBuffer && !warned.includes(msg.author.id)) {
-				mute(msg);
-			}
-			else if (matched == maxBuffer) {
-				if (!banned.includes(msg.author.id)) {
-					mute(msg);
-				}
-			}
-		}
-		else if (authors[i].time < now - interval) {
-			authors.splice(i);
-			warned.splice(warned.indexOf(authors[i]));
-			banned.splice(warned.indexOf(authors[i]));
-		}
-		if (messagelog.length >= 200) {
-			messagelog.shift();
-		}
-	}
 }
 
 function levenTesting() {

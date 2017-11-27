@@ -16,6 +16,7 @@ import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
+import antiSpam, {antiSpamOpts} from "./anti-spam";
 
 const AudioSprite = require('audiosprite-pkg');
 // Create an instance of a Discord client
@@ -35,7 +36,7 @@ meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
 const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216', '108273981655642112'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
-	stfuInit(oldUser, newUser, true)
+	stfuInit(oldUser, newUser, true);
 });
 export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMember, joined?: boolean) {
 	if (client.voiceConnections.array().length > 0) {
@@ -43,13 +44,13 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	}
 	if (!joined && newUser.voiceChannel !== undefined) {
 		stfuTrue(newUser);
-		return
+		return;
 	}
 	if (newUser.voiceChannel === undefined) {
 		return;
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
-		if (_.random(1, 100) < 90) return;
+		if (_.random(1, 100) < 90) { return; }
 		stfuTrue(newUser);
 	}
 }
@@ -80,7 +81,7 @@ function stfuTrue(newUser: Discord.GuildMember) {
 }
 
 function stfu(newUser) {
-	if (!newUser || !newUser.voiceChannel) return;
+	if (!newUser || !newUser.voiceChannel) { return; }
 	newUser.voiceChannel.join()
 		.then(voice => {
 			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.mp3`)));
@@ -111,6 +112,12 @@ function stfu(newUser) {
 client.on('ready', () => {
 	console.log('I am ready!');
 	client.user.setGame('in moderation');
+	const opts: antiSpamOpts = {
+		warnBuffer: 10,
+		interval: 1000,
+		duplicates: 7
+	};
+	antiSpam(client, opts);
 });
 
 // Create an event listener for messages
