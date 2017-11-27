@@ -1,5 +1,10 @@
 {
 	"allowedRoles": [],
+	"allowedUsers": [],
 	"allowedChannels": [],
-	"allowedServers": []
+	"allowedServers": [],
+	"modChannel: "",
+	"paradigmID": "",
+	"token": ""
+
 }
