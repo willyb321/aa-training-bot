@@ -56,6 +56,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 
 function stfuTrue(newUser: Discord.GuildMember) {
 	newUser.user.username = _.escapeRegExp(newUser.user.username);
+	newUser.user.username = newUser.user.username.replace('/', '+');
 	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 	setTimeout(() => {
