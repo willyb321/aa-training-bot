@@ -91,6 +91,9 @@ export function noSpamPls(message: Discord.Message) {
 }
 
 export function checkAllowed(msg) {
+	if (!msg || !msg.author || !msg.author.id || !msg.member || !msg.member.roles) {
+		return
+	}
 	if (config.allowedUsers.includes(msg.author.id)) {
 		return true;
 	}
