@@ -47,13 +47,13 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 		stfuTrue(newUser);
 		return;
 	}
+	if (_.random(1, 100) < 90) {
+		return;
+	}
 	if (newUser.voiceChannel === undefined) {
 		return;
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
-		if (_.random(1, 100) < 90) {
-			return;
-		}
 		stfuTrue(newUser);
 	}
 }
