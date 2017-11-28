@@ -1,7 +1,7 @@
 import * as Discord from 'discord.js';
 import {stfuInit} from '../index';
 
-const allowedToSTFU: any = ['374118891854495744', '374118893012385792'];
+const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
 
 export function stfu(message: Discord.Message) {
 	const user = message.mentions.members.first();
