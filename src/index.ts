@@ -47,7 +47,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 		stfuTrue(newUser);
 		return;
 	}
-	if (Math.random() > 0.9) {
+	if (Math.random() < 0.9) {
 		return;
 	}
 	if (newUser.voiceChannel === undefined) {
