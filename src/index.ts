@@ -38,6 +38,7 @@ const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
 	stfuInit(oldUser, newUser, true);
 });
+
 export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMember, joined?: boolean) {
 	if (client.voiceConnections.array().length > 0) {
 		return;
@@ -50,7 +51,9 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 		return;
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
-		if (_.random(1, 100) < 90) { return; }
+		if (_.random(1, 100) < 90) {
+			return;
+		}
 		stfuTrue(newUser);
 	}
 }
@@ -81,10 +84,15 @@ function stfuTrue(newUser: Discord.GuildMember) {
 }
 
 function stfu(newUser) {
-	if (!newUser || !newUser.voiceChannel) { return; }
+	if (!newUser || !newUser.voiceChannel) {
+		return;
+	}
 	newUser.voiceChannel.join()
 		.then(voice => {
-			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {bitrate: 10000, passes: 1});
+			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
+				bitrate: 10000,
+				passes: 1
+			});
 			voiceDis.on('start', () => {
 				console.log('Start');
 			});
