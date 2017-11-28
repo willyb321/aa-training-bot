@@ -166,6 +166,10 @@ client.on('message', (message: Discord.Message) => {
 		commands.noOof(message);
 	}
 	commands.noSpamPls(message);
+	if (message.content.startsWith('!stfu')) {
+		// Send "pong" to the same channel
+		commands.stfu(message);
+	}
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;
 	}
@@ -227,10 +231,6 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content === '!help') {
 		// Send "pong" to the same channel
 		commands.help(message);
-	}
-	if (message.content.startsWith('!stfu')) {
-		// Send "pong" to the same channel
-		commands.stfu(message);
 	}
 });
 console.log(commands);
