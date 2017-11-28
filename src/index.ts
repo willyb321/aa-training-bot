@@ -84,7 +84,7 @@ function stfu(newUser) {
 	if (!newUser || !newUser.voiceChannel) { return; }
 	newUser.voiceChannel.join()
 		.then(voice => {
-			const voiceDis = voice.playStream(fs.createReadStream(join(tmpdir(), `stfu-${newUser.user.username}.mp3`)));
+			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`));
 			voiceDis.on('start', () => {
 				console.log('Start');
 			});
