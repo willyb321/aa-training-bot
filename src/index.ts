@@ -16,7 +16,7 @@ import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
-import antiSpam, {antiSpamOpts} from "./anti-spam";
+import antiSpam, {antiSpamOpts} from './anti-spam';
 
 const AudioSprite = require('audiosprite-pkg');
 // Create an instance of a Discord client
@@ -84,12 +84,13 @@ function stfuTrue(newUser: Discord.GuildMember) {
 	}, _.random(1000, 5000));
 }
 
-function stfu(newUser) {
+function stfu(newUser: Discord.GuildMember) {
 	if (!newUser || !newUser.voiceChannel) {
 		return;
 	}
 	newUser.voiceChannel.join()
 		.then(voice => {
+			newUser.guild.members.get(client.user.id).setMute(false, 'Nah.');
 			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
 				bitrate: 10000,
 				passes: 1

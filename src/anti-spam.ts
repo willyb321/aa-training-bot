@@ -1,20 +1,20 @@
 import * as Discord from 'discord.js';
-import {botLog, currentStatus} from "./utils";
-import {client} from "./index";
-import {checkAllowed} from "./commands";
+import {botLog, currentStatus} from './utils';
+import {client, stfuInit} from './index';
+import {checkAllowed} from './commands';
 
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 
 const authors = [];
-let warned: Array<string> = [];
-let banned: Array<string> = [];
-let messagelog = [];
+const warned: string[] = [];
+const banned: string[] = [];
+const messagelog = [];
 
 export interface antiSpamOpts {
 	warnBuffer: number;
 	interval: number;
-	duplicates: number
+	duplicates: number;
 }
 
 /**
@@ -33,8 +33,10 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		if (checkAllowed(message)) {
 			return;
 		}
-		if (message.author.id !== bot.user.id) {
-			let now = Math.floor(Date.now());
+		if (message.author.id === bot.user.id) {
+			return;
+		}
+			const now = Math.floor(Date.now());
 			authors.push({
 				time: now,
 				author: message.author.id
@@ -52,7 +54,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 				}
 			}
 			// Check matched count
-			if (msgMatch == maxDuplicatesWarning && !warned.includes(message.author.id)) {
+			if (msgMatch >= maxDuplicatesWarning && !warned.includes(message.author.id)) {
 				mute(message);
 			}
 
@@ -61,7 +63,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 			for (let i = 0; i < authors.length; i++) {
 				if (authors[i].time > now - interval) {
 					matched++;
-					if (matched === warnBuffer && !warned.includes(message.author.id)) {
+					if (matched >= warnBuffer && !warned.includes(message.author.id)) {
 						mute(message);
 					}
 				}
@@ -74,7 +76,6 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 					messagelog.shift();
 				}
 			}
-		}
 	});
 
 	/**
@@ -88,6 +89,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		}
 		message.member.addRole(mutedRole, 'Spammed text')
 			.then(() => {
+				stfuInit(message.member, message.member);
 				botLog(`Muting: ${message.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
 				setTimeout(() => {
 					message.member.removeRole(mutedRole, 'Spammed text')
@@ -104,4 +106,4 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 			});
 	}
 
-};
+}
