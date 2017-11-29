@@ -65,7 +65,8 @@ function stfuTrue(newUser: Discord.GuildMember) {
 	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 	setTimeout(() => {
 		if (newUser.voiceChannel) {
-			const buf = meSpeak.speak(`Shut the fuck up ${newUser.user.username}`, {rawdata: 'buffer'});
+			const msg = `Shut the fuck up ${newUser.user.username}`;
+			const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
 			fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
 			const as = new AudioSprite();
 			as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
@@ -170,6 +171,7 @@ client.on('message', (message: Discord.Message) => {
 		}
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
+	message.content = message.content.toLowerCase();
 	if (commands.isItOof(message)) {
 		commands.noOof(message);
 	}
@@ -177,6 +179,10 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content.startsWith('!stfu')) {
 		// Send "pong" to the same channel
 		commands.stfu(message);
+	}
+	if (message.content.startsWith('!rub') || message.content.startsWith('!meat')) {
+		// Send "pong" to the same channel
+		commands.meat(message);
 	}
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;
