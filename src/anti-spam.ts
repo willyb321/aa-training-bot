@@ -36,46 +36,46 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		if (message.author.id === bot.user.id) {
 			return;
 		}
-			const now = Math.floor(Date.now());
-			authors.push({
-				time: now,
-				author: message.author.id
-			});
-			messagelog.push({
-				message: message.content,
-				author: message.author.id
-			});
+		const now = Math.floor(Date.now());
+		authors.push({
+			time: now,
+			author: message.author.id
+		});
+		messagelog.push({
+			message: message.content,
+			author: message.author.id
+		});
 
-			// Check how many times the same message has been sent.
-			let msgMatch = 0;
-			for (let i = 0; i < messagelog.length; i++) {
-				if (messagelog[i].message == message.content && (messagelog[i].author == message.author.id) && (message.author.id !== bot.user.id)) {
-					msgMatch++;
+		// Check how many times the same message has been sent.
+		let msgMatch = 0;
+		for (let i = 0; i < messagelog.length; i++) {
+			if (messagelog[i].message == message.content && (messagelog[i].author == message.author.id) && (message.author.id !== bot.user.id)) {
+				msgMatch++;
+			}
+		}
+		// Check matched count
+		if (msgMatch >= maxDuplicatesWarning && !warned.includes(message.author.id)) {
+			mute(message);
+		}
+
+		let matched = 0;
+
+		for (let i = 0; i < authors.length; i++) {
+			if (authors[i].time > now - interval) {
+				matched++;
+				if (matched >= warnBuffer && !warned.includes(message.author.id)) {
+					mute(message);
 				}
 			}
-			// Check matched count
-			if (msgMatch >= maxDuplicatesWarning && !warned.includes(message.author.id)) {
-				mute(message);
+			else if (authors[i].time < now - interval) {
+				authors.splice(i);
+				warned.splice(warned.indexOf(authors[i]));
+				banned.splice(warned.indexOf(authors[i]));
 			}
-
-			let matched = 0;
-
-			for (let i = 0; i < authors.length; i++) {
-				if (authors[i].time > now - interval) {
-					matched++;
-					if (matched >= warnBuffer && !warned.includes(message.author.id)) {
-						mute(message);
-					}
-				}
-				else if (authors[i].time < now - interval) {
-					authors.splice(i);
-					warned.splice(warned.indexOf(authors[i]));
-					banned.splice(warned.indexOf(authors[i]));
-				}
-				if (messagelog.length >= 100) {
-					messagelog.shift();
-				}
+			if (messagelog.length >= 100) {
+				messagelog.shift();
 			}
+		}
 	});
 
 	/**
@@ -99,7 +99,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 						.catch(err => {
 							console.log(err);
 						});
-				}, 30000);
+				}, 90000);
 			})
 			.catch(err => {
 				console.log(err);

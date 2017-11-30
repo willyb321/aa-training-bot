@@ -124,7 +124,7 @@ client.on('ready', () => {
 	client.user.setGame('in moderation');
 	const opts: antiSpamOpts = {
 		warnBuffer: 10,
-		interval: 1000,
+		interval: 20000,
 		duplicates: 7
 	};
 	antiSpam(client, opts);
