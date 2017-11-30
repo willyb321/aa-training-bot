@@ -16,6 +16,8 @@ export function help(message: Discord.Message) {
 	helpMessage += '!ir [@people]: Mark as instanced and ready to shoot.\n';
 	helpMessage += '!go: Mark the start of the shooting.\n';
 	helpMessage += '!reset: Reset the session.\n';
+	helpMessage += '!rub [@people]: Give your meat a good old rub..\n';
+	helpMessage += '!stfu [@people]: Yes.\n';
 	message.reply(helpMessage);
 	return;
 }
