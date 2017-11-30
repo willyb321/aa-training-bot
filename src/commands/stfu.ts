@@ -1,11 +1,15 @@
 import * as Discord from 'discord.js';
 import {stfuInit, client} from '../index';
 import {join} from 'path';
+import {currentStatus} from "../utils";
 
 const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
 
 export function stfu(message: Discord.Message) {
 	const user = message.mentions.members.first();
+	if (currentStatus.inVoice) {
+		return;
+	}
 	if (!user) {
 		return;
 	}
@@ -31,8 +35,12 @@ export function meat(message: Discord.Message) {
 	if (!newUser.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
 		return;
 	}
+	if (currentStatus.inVoice) {
+		return;
+	}
 	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && newUser.voiceChannel) {
 		console.log('Doing it!');
+		currentStatus.inVoice = true;
 		newUser.voiceChannel.join()
 			.then(voice => {
 				const voiceDis = voice.playFile(join(__dirname, '..', '..', 'meat.mp3'), {
@@ -46,6 +54,7 @@ export function meat(message: Discord.Message) {
 					console.log('End');
 					setTimeout(() => {
 						voice.disconnect();
+						currentStatus.inVoice = false;
 					}, 10000);
 					voice.disconnect();
 				});

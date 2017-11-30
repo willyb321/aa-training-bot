@@ -48,7 +48,11 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	if (client.voiceConnections.array().length > 0) {
 		return;
 	}
+	if (currentStatus.inVoice) {
+		return;
+	}
 	if (!joined && newUser.voiceChannel !== undefined) {
+		currentStatus.inVoice = true;
 		stfuTrue(newUser);
 		return;
 	}
@@ -58,7 +62,8 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	if (newUser.voiceChannel === undefined) {
 		return;
 	}
-	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined) {
+	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
+		currentStatus.inVoice = true;
 		stfuTrue(newUser);
 	}
 }
@@ -107,8 +112,8 @@ function stfu(newUser: Discord.GuildMember) {
 				console.log('End');
 				setTimeout(() => {
 					voice.disconnect();
+					currentStatus.inVoice = false;
 				}, 10000);
-				voice.disconnect();
 			});
 			voiceDis.on('speaking', yesorno => {
 				console.log('Speaking');
@@ -119,6 +124,7 @@ function stfu(newUser: Discord.GuildMember) {
 		})
 		.catch(err => {
 			console.log(err);
+			return stfu(newUser);
 		});
 }
 

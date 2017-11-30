@@ -30,7 +30,8 @@ export const currentStatus = {
 	teamMessage: '',
 	currentSpams: {},
 	currentDms: {},
-	replies
+	replies,
+	inVoice: false
 };
 
 export const chunk = (target, size) => {
