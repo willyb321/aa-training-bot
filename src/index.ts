@@ -36,6 +36,11 @@ meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
 const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216', '108273981655642112'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
+	try {
+		newUser.guild.members.get(client.user.id).setMute(false, 'Nah.');
+	} catch (err) {
+		console.log(err);
+	}
 	stfuInit(oldUser, newUser, true);
 });
 
