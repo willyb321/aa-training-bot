@@ -1,3 +1,9 @@
+/**
+ * @module AntiSpam
+ */
+/**
+ * ignore
+ */
 import * as Discord from 'discord.js';
 import {botLog, currentStatus} from './utils';
 import {client, stfuInit} from './index';

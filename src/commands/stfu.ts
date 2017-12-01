@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import * as Discord from 'discord.js';
 import {stfuInit, client} from '../index';
 import {join} from 'path';

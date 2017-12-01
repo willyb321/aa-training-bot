@@ -1,7 +1,7 @@
 {
-  "name": "elite-pvp-training-bot",
+  "name": "ainsley-bot",
   "private": true,
-  "description": "Training bot for Elite PVP",
+  "description": "Training bot for Elite PVP. Also does Ainsley.",
   "license": "MIT",
   "repository": {
     "url": "https://github.com/willyb321/aa-training-bot"
@@ -31,6 +31,7 @@
     "opusscript": "0.0.4",
     "serve": "^6.4.1",
     "source-map-support": "^0.5.0",
+    "typedoc-plugin-external-module-name": "^1.0.10",
     "typescript": "^2.7.0-dev.20171121",
     "uws": "^9.14.0"
   },
