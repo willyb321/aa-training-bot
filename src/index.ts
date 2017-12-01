@@ -51,12 +51,18 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	if (currentStatus.inVoice) {
 		return;
 	}
+	const now = Math.floor(Date.now());
+	if (currentStatus.lastStfu && currentStatus.lastStfu - now <= commands.stfuInterval) {
+		console.log('Not STFUing since 90 seconds have not passed since the last one.')
+		return;
+	}
 	if (!joined && newUser.voiceChannel !== undefined) {
 		currentStatus.inVoice = true;
+		currentStatus.lastStfu = Math.floor(Date.now());
 		stfuTrue(newUser);
 		return;
 	}
-	if (Math.random() < 0.9) {
+	if (Math.random() < 0.95) {
 		return;
 	}
 	if (newUser.voiceChannel === undefined) {
@@ -64,6 +70,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
 		currentStatus.inVoice = true;
+		currentStatus.lastStfu = Math.floor(Date.now());
 		stfuTrue(newUser);
 	}
 }

@@ -9,6 +9,7 @@ import {stfuInit, client} from '../index';
 import {join} from 'path';
 import {currentStatus} from "../utils";
 
+export const stfuInterval: number = 90000;
 const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
 
 export function stfu(message: Discord.Message) {
@@ -17,6 +18,11 @@ export function stfu(message: Discord.Message) {
 		return;
 	}
 	if (!user) {
+		return;
+	}
+	const now = Math.floor(Date.now());
+	if (currentStatus.lastStfu && currentStatus.lastStfu - now <= stfuInterval) {
+		console.log('Not STFUing since 90 seconds have not passed since the last one.')
 		return;
 	}
 	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && user.voiceChannel) {
@@ -30,12 +36,18 @@ export function stfu(message: Discord.Message) {
 	}
 }
 
+
 export function meat(message: Discord.Message) {
 	if (client.voiceConnections.first()) {
 		return;
 	}
 	const newUser = message.mentions.members.first();
 	if (!newUser) {
+		return;
+	}
+	const now = Math.floor(Date.now());
+	if (currentStatus.lastStfu && currentStatus.lastStfu - now <= stfuInterval) {
+		console.log('Not STFUing since 90 seconds have not passed since the last one.')
 		return;
 	}
 	if (!newUser.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
@@ -46,6 +58,7 @@ export function meat(message: Discord.Message) {
 	}
 	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && newUser.voiceChannel) {
 		console.log('Doing it!');
+		currentStatus.lastStfu = Math.floor(Date.now());
 		currentStatus.inVoice = true;
 		newUser.voiceChannel.join()
 			.then(voice => {

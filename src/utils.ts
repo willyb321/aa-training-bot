@@ -31,7 +31,8 @@ export const currentStatus = {
 	currentSpams: {},
 	currentDms: {},
 	replies,
-	inVoice: false
+	inVoice: false,
+	lastStfu: null
 };
 
 export const chunk = (target, size) => {
