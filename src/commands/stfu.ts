@@ -47,7 +47,8 @@ export function meat(message: Discord.Message) {
 	}
 	const now = Math.floor(Date.now());
 	if (currentStatus.lastStfu && currentStatus.lastStfu - now <= stfuInterval) {
-		console.log('Not STFUing since 90 seconds have not passed since the last one.')
+		console.log(`Its only been: ${currentStatus.lastStfu - now} since last stfu.`);
+		console.log('Not STFUing since 90 seconds have not passed since the last one.');
 		return;
 	}
 	if (!newUser.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
