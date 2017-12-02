@@ -17,6 +17,7 @@ import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
 import antiSpam, {antiSpamOpts} from './anti-spam';
+import {pvpVideoID} from "./commands";
 
 const AudioSprite = require('audiosprite-pkg');
 // Create an instance of a Discord client
@@ -54,7 +55,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	const now = Math.floor(Date.now());
 	if (!joined && newUser.voiceChannel !== undefined) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
-			console.log('Not STFUing since 90 seconds have not passed since the last one.')
+			console.log('Not STFUing since 90 seconds have not passed since the last one.');
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -71,7 +72,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
 			console.log(`Its only been: ${currentStatus.lastStfu - now} since last stfu.`);
-			console.log('Not STFUing since 90 seconds have not passed since the last one.')
+			console.log('Not STFUing.');
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -125,7 +126,7 @@ function stfu(newUser: Discord.GuildMember) {
 				setTimeout(() => {
 					voice.disconnect();
 					currentStatus.inVoice = false;
-				}, 10000);
+				}, 2000);
 			});
 			voiceDis.on('speaking', yesorno => {
 				console.log('Speaking');
@@ -166,6 +167,9 @@ client.on('message', (message: Discord.Message) => {
 	}
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return;
+	}
+	if (message.channel.id === pvpVideoID) {
+		return commands.moderatePVP(message);
 	}
 	if (!currentStatus.currentSpams[message.author.id]) {
 		currentStatus.currentSpams[message.author.id] = {

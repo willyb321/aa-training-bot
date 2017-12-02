@@ -9,7 +9,7 @@ import {stfuInit, client} from '../index';
 import {join} from 'path';
 import {currentStatus} from "../utils";
 
-export const stfuInterval: number = 90000;
+export const stfuInterval: number = 60000;
 const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
 
 export function stfu(message: Discord.Message) {
@@ -21,10 +21,6 @@ export function stfu(message: Discord.Message) {
 		return;
 	}
 	const now = Math.floor(Date.now());
-	if (currentStatus.lastStfu && currentStatus.lastStfu - now <= stfuInterval) {
-		console.log('Not STFUing since 90 seconds have not passed since the last one.')
-		return;
-	}
 	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && user.voiceChannel) {
 		console.log('Doing it!');
 		stfuInit(user, user);
