@@ -11,7 +11,7 @@ import * as commands from './commands';
 import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
-import {AudioSprite} from 'audiosprite-pkg';
+import AudioSprite from 'audiosprite-pkg';
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
