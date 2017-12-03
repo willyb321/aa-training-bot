@@ -19,3 +19,4 @@ export * from './help';
 export * from './moderation';
 export * from './stfu';
 export * from './pvpmod';
+export * from './purge';

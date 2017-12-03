@@ -212,6 +212,9 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		commands.meat(message);
 	}
+	if (message.content.startsWith('!purge')) {
+		commands.purge(message);
+	}
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;
 	}
