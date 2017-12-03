@@ -1,10 +1,16 @@
 import * as Discord from 'discord.js';
+import * as Raven from 'raven';
+import {config} from '../utils';
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
 
 export function purge(message: Discord.Message) {
 	if (!message.member.roles.get('374118891854495744')) {
 		return;
 	}
-	let split = message.content.split(' ', 2);
+	const split = message.content.split(' ', 2);
 	let limit = null;
 	if (!split || !split[1]) {
 		return;
@@ -20,6 +26,6 @@ export function purge(message: Discord.Message) {
 	message.channel.fetchMessages({limit: limit + 1})
 	.then(messages => message.channel.bulkDelete(messages))
 	.catch(err => {
-		console.log(err);
-	})
+		Raven.captureException(err);
+	});
 }

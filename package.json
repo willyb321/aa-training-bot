@@ -29,6 +29,7 @@
     "nedb": "^1.8.0",
     "npm": "^5.5.1",
     "opusscript": "0.0.4",
+    "raven": "^2.2.1",
     "serve": "^6.4.1",
     "source-map-support": "^0.5.0",
     "typedoc-plugin-external-module-name": "^1.0.10",
@@ -36,9 +37,14 @@
     "uws": "^9.14.0"
   },
   "devDependencies": {
+    "@types/leven": "^2.1.1",
     "@types/lodash": "^4.14.85",
     "@types/nedb": "^1.8.5",
     "@types/node": "^8.0.53",
+    "@types/npm": "^2.0.29",
+    "@types/raven": "^2.1.2",
+    "@types/source-map-support": "^0.4.0",
+    "@types/uws": "^0.13.0",
     "concurrently": "^3.5.1",
     "nodemon": "^1.12.1",
     "tslint": "^5.8.0",

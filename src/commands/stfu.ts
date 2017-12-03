@@ -7,7 +7,13 @@
 import * as Discord from 'discord.js';
 import {stfuInit, client} from '../index';
 import {join} from 'path';
-import {currentStatus} from "../utils";
+import {currentStatus, config} from '../utils';
+import * as Raven from 'raven';
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
+
 
 export const stfuInterval: number = 60000;
 const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
@@ -31,7 +37,6 @@ export function stfu(message: Discord.Message) {
 		return;
 	}
 }
-
 
 export function meat(message: Discord.Message) {
 	if (client.voiceConnections.first()) {
@@ -78,11 +83,12 @@ export function meat(message: Discord.Message) {
 					console.log('Speaking');
 				});
 				voiceDis.on('error', err => {
-					console.log(err);
+					Raven.captureException(err);
 				});
 			})
 			.catch(err => {
-				console.log(err);
+				Raven.captureException(err);
+				Raven.captureException(err);
 			});
 	}
 }

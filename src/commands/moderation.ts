@@ -6,12 +6,15 @@
  */
 import * as Discord from 'discord.js';
 import {client} from '../index';
-import {currentStatus} from '../utils';
-import * as leven from 'leven';
+import {currentStatus, config} from '../utils';
 import * as _ from 'lodash';
 import {botLog} from '../utils';
+import * as Raven from 'raven';
 
-const config = require('../../config.json');
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
+
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
@@ -45,6 +48,8 @@ export function noOof(message: Discord.Message) {
 				.catch(err => {
 					if (err.message === 'Cannot execute action on a DM channel') {
 						return;
+					} else {
+						Raven.captureException(err);
 					}
 				});
 		});
@@ -98,61 +103,4 @@ export function checkAllowed(msg) {
 		return true;
 	}
 	return !!msg.member.roles.find(elem => config.allowedRoles.includes(elem.id));
-}
-
-function levenTesting() {
-	const spamtest = ['aertgaerg',
-		'e6j',
-		'34f',
-		'23F',
-		'QW5H',
-		'Q2W57HJ',
-		'34G£$',
-		'GQ45',
-		'H',
-		'3G',
-		'3',
-		'H1345',
-		'H',
-		'51346H',
-		'146QJN',
-		'257J',
-		'F3q',
-		'34T3Q 7N5',
-		'3 4T',
-		'3TB',
-		'Q45 67',
-		'6UQ5',
-		'Q4 6UYQ345',
-		'234tb b4q23t 45',
-		'qua456',
-		'q45 yqw56 j4',
-		'h 5q',
-		'q45y hq45 h',
-		'w567jqw5 6u',
-		'3 y45',
-		'adrg asdfgAERG',
-		'wefWEFEGEG',
-		'SEFwfaergaw4g',
-		'qaergqaercvqearv',
-		'tbrqaerg qef q',
-		'fqe',
-		'ghqhq',
-		'e g',
-		'w34fq3454gdawefawefWEFQ4T6HAEWRFGQ3E44FG',
-		'QERTGQ46G3VSTGHSEGASGAETG',
-		'ADTGBWRYH134GVAERGQWRTGH',
-		'aegsrthq2w456hq5gqaegaerthgq456hw5h',
-		'asdfhaerthw57jq24harbsgrhnarhsryhjaer',
-		'hwrjhwr6hjq45hqa4brargsrfghqaerth',
-		'aergq45hqhqw7jkw5jathzdfghsty',
-		'jme6jQ3GW5NWETBNSTGEGSDHJ',
-		'46JWHNRSNHQAH45ETTHQA4',
-		'GH65QAH4BW46AHUJWHN6SN',
-		'46YUQAZ6QHA46J5YRJNS5A6U4'];
-	spamtest.forEach((elem: string, ind: number) => {
-		console.log(`String 1: ${elem}`);
-		console.log(`String 2: ${spamtest[ind + 1]}`);
-		console.log(`Leven = ${leven(elem, spamtest[ind + 1] || '')}`);
-	});
 }

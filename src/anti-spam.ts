@@ -5,9 +5,14 @@
  * ignore
  */
 import * as Discord from 'discord.js';
-import {botLog, currentStatus} from './utils';
+import {botLog, currentStatus, config} from './utils';
 import {client, stfuInit} from './index';
 import {checkAllowed} from './commands';
+import * as Raven from 'raven';
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
 
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
@@ -103,12 +108,12 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 							currentStatus.currentSpams[message.author.id].muted = false;
 						})
 						.catch(err => {
-							console.log(err);
+							Raven.captureException(err);
 						});
 				}, 90000);
 			})
 			.catch(err => {
-				console.log(err);
+				Raven.captureException(err);
 			});
 	}
 

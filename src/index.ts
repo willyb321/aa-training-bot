@@ -10,7 +10,8 @@ import * as Discord from 'discord.js';
 import * as commands from './commands';
 import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
-
+import * as Raven from 'raven';
+import {AudioSprite} from 'audiosprite-pkg';
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
@@ -19,18 +20,21 @@ import {tmpdir} from 'os';
 import antiSpam, {antiSpamOpts} from './anti-spam';
 import {pvpVideoID} from "./commands";
 
-const AudioSprite = require('audiosprite-pkg');
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
+
 // Create an instance of a Discord client
 export const client = new Discord.Client();
 const {allowedChannels, allowedServers, token} = config;
 // The token of your bot - https://discordapp.com/developers/applications/me
 
 process.on('uncaughtException', (err: Error) => {
-	console.log(err);
+	Raven.captureException(err);
 });
 
 process.on('unhandledRejection', (err: Error) => {
-	console.log(err);
+	Raven.captureException(err);
 });
 meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
@@ -40,7 +44,7 @@ client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.Gu
 	try {
 		newUser.guild.members.get(client.user.id).setMute(false, 'Nah.');
 	} catch (err) {
-		console.log(err);
+		Raven.captureException(err);
 	}
 	stfuInit(oldUser, newUser, true);
 });
@@ -94,11 +98,11 @@ function stfuTrue(newUser: Discord.GuildMember) {
 			const as = new AudioSprite();
 			as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
 				if (err) {
-					console.log(err);
+					Raven.captureException(err);
 				}
 				as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
 					if (err) {
-						console.log(err);
+						Raven.captureException(err);
 					}
 					stfu(newUser);
 				});
@@ -132,11 +136,11 @@ function stfu(newUser: Discord.GuildMember) {
 				console.log('Speaking');
 			});
 			voiceDis.on('error', err => {
-				console.log(err);
+				Raven.captureException(err);
 			});
 		})
 		.catch(err => {
-			console.log(err);
+			Raven.captureException(err);
 			return stfu(newUser);
 		});
 }
