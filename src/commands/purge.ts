@@ -17,5 +17,9 @@ export function purge(message: Discord.Message) {
 	if (limit > 25) {
 		limit = 25;
 	}
-	message.channel.fetchMessages({limit: limit + 1}).then(messages => message.channel.bulkDelete(messages));
+	message.channel.fetchMessages({limit: limit + 1})
+	.then(messages => message.channel.bulkDelete(messages))
+	.catch(err => {
+		console.log(err);
+	})
 }
