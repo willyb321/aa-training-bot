@@ -76,8 +76,7 @@ export function meat(message: Discord.Message) {
 					setTimeout(() => {
 						voice.disconnect();
 						currentStatus.inVoice = false;
-					}, 10000);
-					voice.disconnect();
+					}, 2000);
 				});
 				voiceDis.on('speaking', yesorno => {
 					console.log('Speaking');
@@ -87,7 +86,6 @@ export function meat(message: Discord.Message) {
 				});
 			})
 			.catch(err => {
-				Raven.captureException(err);
 				Raven.captureException(err);
 			});
 	}
