@@ -205,19 +205,19 @@ client.on('message', (message: Discord.Message) => {
 	});
 	message.content = message.content.toLowerCase();
 	if (commands.isItOof(message)) {
-		commands.noOof(message);
+		return commands.noOof(message);
 	}
 	commands.noSpamPls(message);
 	if (message.content.startsWith('!stfu')) {
 		// Send "pong" to the same channel
-		commands.stfu(message);
+		return commands.stfu(message);
 	}
 	if (message.content.startsWith('!rub') || message.content.startsWith('!meat')) {
 		// Send "pong" to the same channel
-		commands.meat(message);
+		return commands.meat(message);
 	}
 	if (message.content.startsWith('!purge')) {
-		commands.purge(message);
+		return commands.purge(message);
 	}
 	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
 		return;
@@ -230,56 +230,60 @@ client.on('message', (message: Discord.Message) => {
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
-		commands.start(message);
+		return commands.start(message);
 	}
 	if (message.content.startsWith('!register') || message.content.startsWith('!reg')) {
 		// Send "pong" to the same channel
-		commands.register(message);
+		return commands.register(message);
 	}
 	if (message.content.startsWith('!unregister') || message.content.startsWith('!unreg')) {
 		// Send "pong" to the same channel
-		commands.unregister(message);
+		return commands.unregister(message);
 	}
 	if (message.content === '!who') {
 		// Send "pong" to the same channel
-		commands.who(message);
+		return commands.who(message);
 	}
 	if (message.content.startsWith('!teams')) {
 		// Send "pong" to the same channel
-		commands.teams(message);
+		return commands.teams(message);
 	}
 	if (message.content.startsWith('!rating')) {
 		// Send "pong" to the same channel
-		commands.rating(message);
+		return commands.rating(message);
 	}
 	if (message.content.startsWith('!remove')) {
 		// Send "pong" to the same channel
-		commands.remove(message);
+		return commands.remove(message);
 	}
 	if (message.content === '!instanced' || message.content === '!i') {
 		// Send "pong" to the same channel
-		commands.instanced(message);
+		return commands.instanced(message);
 	}
 	if (message.content === '!ready' || message.content === '!r') {
 		// Send "pong" to the same channel
-		commands.ready(message);
+		return commands.ready(message);
 	}
 	if (message.content.startsWith('!ir')) {
 		// Send "pong" to the same channel
 		commands.instanced(message);
 		commands.ready(message);
+		return;
 	}
 	if (message.content === '!go') {
 		// Send "pong" to the same channel
-		commands.go(message);
+		return commands.go(message);
 	}
 	if (message.content === '!reset') {
 		// Send "pong" to the same channel
-		commands.reset(message);
+		return commands.reset(message);
 	}
 	if (message.content === '!help') {
 		// Send "pong" to the same channel
-		commands.help(message);
+		return commands.help(message);
+	}
+	if (message.content.startsWith('!')) {
+		return message.reply('whadiyatalkinabeet');
 	}
 });
 console.log(commands);
