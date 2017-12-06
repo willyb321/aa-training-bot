@@ -37,6 +37,9 @@ export function modReport(message: Discord.Message) {
 
 export function isItOof(message: Discord.Message) {
 	message.content = _.deburr(message.content);
+	if (message.content.startsWith('o') && message.content.endsWith('f') && message.content.search('oof') > -1) {
+		return true
+	}
 	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
 }
 

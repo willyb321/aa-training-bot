@@ -219,9 +219,7 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content.startsWith('!purge')) {
 		return commands.purge(message);
 	}
-	if (_.indexOf(allowedChannels, message.channel.id) === -1) {
-		return;
-	}
+
 	//TODO add some replies
 	// if (message.isMentioned(client.user)) {
 	// 	_.shuffle(currentStatus.replies);
