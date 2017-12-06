@@ -19,15 +19,14 @@ const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
 const oofs = ['oof', '00f', '0of', 'o0f'];
-
+const unicodeOofs = [];
 export function modReport(message: Discord.Message) {
 	if (isItOof(message)) {
 		noOof(message);
 		return;
 	}
 	if (currentStatus.currentDms[message.author.id] && message.createdTimestamp - currentStatus.currentDms[message.author.id].createdTimestamp < 60000) {
-		message.reply('Not sent. No spam thx.');
-		return;
+		return message.reply('Not sent. No spam thx.');
 	}
 	message.react('📧')
 		.then(() => {
@@ -37,7 +36,7 @@ export function modReport(message: Discord.Message) {
 
 export function isItOof(message: Discord.Message) {
 	message.content = _.deburr(message.content);
-	if (message.content.startsWith('o') && message.content.endsWith('f') && message.content.search('oof') > -1) {
+	if (message.content.search('o') > -1 && message.content.search('f') > -1 && message.content.search('oof') > -1) {
 		return true
 	}
 	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
