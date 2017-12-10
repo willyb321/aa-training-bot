@@ -280,9 +280,9 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		return commands.help(message);
 	}
-	if (message.content.startsWith('!')) {
-		return message.reply('whadiyatalkinabeet');
-	}
+	// if (message.content.startsWith('!')) {
+	// 	return message.reply('whadiyatalkinabeet');
+	// }
 });
 console.log(commands);
 // Log our bot in
