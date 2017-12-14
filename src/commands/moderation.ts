@@ -39,7 +39,7 @@ export function isItOof(message: Discord.Message) {
 	if (message.content.startsWith('o') && message.content.endsWith('f') && message.content.search('oof') > -1) {
 		return true
 	}
-	if (message.content.search(`:regional_indicator_o:`) > -1 && message.content.search(':regional_indicator_f:') > -1) {
+	if (message.content.search(`🇴`) > -1 && message.content.search('🇫') > -1) {
 		return true
 	}
 	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
