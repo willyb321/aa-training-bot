@@ -18,7 +18,7 @@ Raven.config(config.ravenDSN, {
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
-const oofs = ['oof', '00f', '0of', 'o0f'];
+const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf'];
 const unicodeOofs = [];
 export function modReport(message: Discord.Message) {
 	if (isItOof(message)) {
@@ -37,6 +37,9 @@ export function modReport(message: Discord.Message) {
 export function isItOof(message: Discord.Message) {
 	message.content = _.deburr(message.content);
 	if (message.content.startsWith('o') && message.content.endsWith('f') && message.content.search('oof') > -1) {
+		return true
+	}
+	if (message.content.search(`:regional_indicator_o:`) > -1 && message.content.search(':regional_indicator_f:') > -1) {
 		return true
 	}
 	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
