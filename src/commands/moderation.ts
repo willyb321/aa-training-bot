@@ -57,7 +57,9 @@ export function noOof(message: Discord.Message) {
 						Raven.captureException(err);
 					}
 				});
-		});
+	}).catch(err => {
+		console.log(err);
+	})
 }
 
 export function noSpamPls(message: Discord.Message) {
