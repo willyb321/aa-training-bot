@@ -7,17 +7,24 @@
 import * as Discord from 'discord.js';
 
 export function help(message: Discord.Message) {
-	let helpMessage: string = '';
-	helpMessage += 'Commands:\n';
-	helpMessage += '!start: Start a training session\n';
-	helpMessage += '!reg[ister] [@people]: Register yourself or others for a training session.\n';
-	helpMessage += '!i[nstanced] [@people]: Mark as instanced.\n';
-	helpMessage += '!r[eady] [@people]: Mark as ready to shoot.\n';
-	helpMessage += '!ir [@people]: Mark as instanced and ready to shoot.\n';
-	helpMessage += '!go: Mark the start of the shooting.\n';
-	helpMessage += '!reset: Reset the session.\n';
-	helpMessage += '!rub [@people]: Give your meat a good old rub..\n';
-	helpMessage += '!stfu [@people]: Yes.\n';
-	message.reply(helpMessage);
-	return;
+	const embed = new Discord.RichEmbed();
+	embed
+		.setTitle('Ainsley')
+		.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+		.setDescription('Commands help')
+		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
+		.setTimestamp()
+		.addField('!start', 'Start a training session')
+		.addField('reg[ister] [@people]', 'Register yourself or others for a training session.')
+		.addField('!i[nstanced] [@people]', 'Mark as instanced.')
+		.addField('!r[eady] [@people]', 'Mark as ready to shoot.')
+		.addField('!ir [@people]', 'Mark as instanced and ready to shoot.')
+		.addField('!go', 'Mark the start of the shooting.')
+		.addField('!reset', 'Reset the session.')
+		.addField('!rub [@people]', 'Give your meat a good old rub..')
+		.addField('!stfu [@people]', 'Yes.')
+		.addField('!restart', 'Restart the bot.')
+		.addField('!status', 'Get bots current status.');
+	return message.reply({embed});
+
 }
