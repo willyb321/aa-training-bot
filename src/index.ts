@@ -99,22 +99,23 @@ function stfuTrue(newUser: Discord.GuildMember) {
 		if (newUser.voiceChannel) {
 			if (existsSync(join(tmpdir(), `stfu-${newUser.user.username}.mp3`))) {
 				return stfu(newUser);
-			}
-			const msg = `Shut the fuck up ${newUser.user.username}`;
-			const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
-			fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-			const as = new AudioSprite();
-			as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
-				if (err) {
-					Raven.captureException(err);
-				}
-				as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
+			} else {
+				const msg = `Shut the fuck up ${newUser.user.username}`;
+				const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
+				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
+				const as = new AudioSprite();
+				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
 					if (err) {
 						Raven.captureException(err);
 					}
-					stfu(newUser);
+					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
+						if (err) {
+							Raven.captureException(err);
+						}
+						stfu(newUser);
+					});
 				});
-			});
+			}
 		}
 	}, _.random(1000, 5000));
 }
@@ -155,7 +156,7 @@ function stfu(newUser: Discord.GuildMember) {
 		})
 		.catch(err => {
 			Raven.captureException(err);
-			return stfu(newUser);
+			return;
 		});
 }
 
