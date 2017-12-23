@@ -54,7 +54,7 @@ export function botLog(message: string, title: string, event: string, channelId?
 			.setTitle(title || 'Ainsley')
 			.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
 			.setDescription(message)
-			.setFooter('By Willyb321', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+			.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
 			.setTimestamp()
 			.addField('Event', event);
 
