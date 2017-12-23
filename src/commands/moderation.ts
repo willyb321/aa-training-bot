@@ -37,6 +37,7 @@ export function modReport(message: Discord.Message) {
 export function isItOof(message: Discord.Message) {
 	let oofedContent = message.content;
 	oofedContent = _.deburr(oofedContent);
+	oofedContent = oofedContent.toLowerCase();
 	oofedContent = _.words(oofedContent).join('');
 	if (oofedContent.startsWith('o') && oofedContent.endsWith('f') && oofedContent.search('oof') > -1) {
 		return true
@@ -44,7 +45,7 @@ export function isItOof(message: Discord.Message) {
 	if (oofedContent.search(`🇴`) > -1 && oofedContent.search('🇫') > -1) {
 		return true
 	}
-	return _.indexOf(oofs, oofedContent.toLowerCase()) >= 0;
+	return _.indexOf(oofs, oofedContent) >= 0;
 }
 
 export function noOof(message: Discord.Message) {
