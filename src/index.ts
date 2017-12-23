@@ -19,6 +19,7 @@ import * as fs from 'fs';
 import {tmpdir} from 'os';
 import antiSpam, {antiSpamOpts} from './anti-spam';
 import {pvpVideoID} from "./commands";
+import {existsSync} from "fs";
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -26,7 +27,7 @@ Raven.config(config.ravenDSN, {
 
 // Create an instance of a Discord client
 export const client = new Discord.Client();
-const {allowedChannels, allowedServers, token} = config;
+const {allowedServers, token} = config;
 // The token of your bot - https://discordapp.com/developers/applications/me
 
 process.on('uncaughtException', (err: Error) => {
@@ -39,10 +40,15 @@ process.on('unhandledRejection', (err: Error) => {
 meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
 });
-const ax3 = ['139931372247580672', '156911063089020928', '120257529740525569', '111992757635010560', '145883108170924032', '254833351846920192', '299390680000626688', '108550009296818176', '119614799062499328', '121791193301385216', '108273981655642112'];
 client.on('voiceStateUpdate', (oldUser: Discord.GuildMember, newUser: Discord.GuildMember) => {
 	try {
-		newUser.guild.members.get(client.user.id).setMute(false, 'Nah.');
+		newUser.guild.members.get(client.user.id).setMute(false, 'Nah.')
+			.then(() => {
+				// no-op
+			})
+			.catch(err => {
+				Raven.captureException(err);
+			});
 	} catch (err) {
 		Raven.captureException(err);
 	}
@@ -59,7 +65,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	const now = Math.floor(Date.now());
 	if (!joined && newUser.voiceChannel !== undefined) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
-			console.log('Not STFUing since 90 seconds have not passed since the last one.');
+			console.log(`Not STFUing since ${commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -75,8 +81,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
-			console.log(`Its only been: ${currentStatus.lastStfu - now} since last stfu.`);
-			console.log('Not STFUing.');
+			console.log(`Not STFUing since ${commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -92,6 +97,9 @@ function stfuTrue(newUser: Discord.GuildMember) {
 	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`, `STFUing ${newUser.user.tag}`, 'STFU');
 	setTimeout(() => {
 		if (newUser.voiceChannel) {
+			if (existsSync(join(tmpdir(), `stfu-${newUser.user.username}.mp3`))) {
+				return stfu(newUser);
+			}
 			const msg = `Shut the fuck up ${newUser.user.username}`;
 			const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
 			fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
@@ -117,7 +125,13 @@ function stfu(newUser: Discord.GuildMember) {
 	}
 	newUser.voiceChannel.join()
 		.then(voice => {
-			newUser.guild.members.get(client.user.id).setMute(false, 'Nah.');
+			newUser.guild.members.get(client.user.id).setMute(false, 'Nah.')
+				.then(() => {
+					// no-op
+				})
+				.catch(err => {
+					Raven.captureException(err);
+				});
 			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
 				bitrate: 10000,
 				passes: 1
@@ -132,7 +146,7 @@ function stfu(newUser: Discord.GuildMember) {
 					currentStatus.inVoice = false;
 				}, 2000);
 			});
-			voiceDis.on('speaking', yesorno => {
+			voiceDis.on('speaking', () => {
 				console.log('Speaking');
 			});
 			voiceDis.on('error', err => {
@@ -149,7 +163,13 @@ function stfu(newUser: Discord.GuildMember) {
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
-	client.user.setGame('in moderation');
+	client.user.setGame('in moderation')
+		.then(() => {
+			// no-op
+		})
+		.catch(err => {
+			Raven.captureException(err);
+		});
 	const opts: antiSpamOpts = {
 		warnBuffer: 10,
 		interval: 20000,
@@ -165,9 +185,14 @@ client.on('message', (message: Discord.Message) => {
 	}
 	if (message.channel.type === 'dm') {
 		commands.isItOof(message);
-		commands.modReport(message);
-		currentStatus.currentDms[message.author.id] = message;
-		return;
+		commands.modReport(message)
+			.then(() => {
+				currentStatus.currentDms[message.author.id] = message;
+				return;
+			})
+			.catch(err => {
+				Raven.captureException(err);
+			});
 	}
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return;
