@@ -30,7 +30,7 @@ export function modReport(message: Discord.Message) {
 	}
 	message.react('📧')
 		.then(() => {
-			botLog(`${message.author.tag}: \`\`\`${message.content.toString()}\`\`\``, true);
+			botLog(`\`\`\`${message.content.toString()}\`\`\``, `${message.author.tag}`, 'Moderator report', config.modChannel);
 		});
 }
 
@@ -81,7 +81,7 @@ export function noSpamPls(message: Discord.Message) {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog(`Muting: ${message.author.tag}\nReason: Spammed roles more than 3 times in 30 seconds\nMute will be removed in 30 seconds.`);
+			botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, '@User Mute', 'Reason: Spammed roles more than 3 times in 30 seconds');
 			message.member.addRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
@@ -94,7 +94,7 @@ export function noSpamPls(message: Discord.Message) {
 		if (currentStatus.currentSpams[message.author.id].userMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog(`Muting: ${message.author.tag}\nReason: Spammed users more than 3 times in 30 seconds.\nMute will be removed in 30 seconds.`);
+			botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, '@Role Mute', 'Reason: Spammed users more than 3 times in 30 seconds');
 			message.member.addRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');

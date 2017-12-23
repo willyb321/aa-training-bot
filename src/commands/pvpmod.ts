@@ -25,7 +25,7 @@ export function moderatePVP(message: Discord.Message) {
 					message.author.createDM()
 						.then(dmChannel => {
 							dmChannel.send(`Don't clog up #pvp-videos. Use another channel for discussion eg #training\nFor reference, your message was: \`\`\`${message.content}\`\`\``);
-							botLog(`Deleted message in #pvp-videos by ${message.author.tag} since it did not contain any embed after 5 seconds. Content was: \`\`\`${message.content}\`\`\` `);
+							botLog(`\`\`\`${message.content.toString()}\`\`\``, `Deleted message in #pvp-videos by ${message.author.tag} since it did not contain any embed after 5 seconds.`, '#pvp-videos message delete');
 						})
 						.catch(err => {
 							Raven.captureException(err);

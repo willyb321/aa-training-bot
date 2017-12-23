@@ -5,6 +5,7 @@
  * ignore
  */
 import * as Datastore from 'nedb';
+import * as Discord from 'discord.js';
 import {client} from './index';
 
 export const config = require('../config.json');
@@ -44,10 +45,19 @@ export const chunk = (target, size) => {
 	}, [[]]);
 };
 
-export function botLog(message: string, modReport?: boolean) {
+export function botLog(message: string, title: string, event: string, channelId?: string) {
 	const botLogId = '383143845841600513';
-	const moderatorReports: any = client.guilds.get(config.paradigmID).channels.get((modReport ? config.modChannel : botLogId));
-	if (moderatorReports) {
-		moderatorReports.send(message);
+	const channel: any = client.guilds.get(config.paradigmID).channels.get(channelId || botLogId);
+	if (channel) {
+		const embed = new Discord.RichEmbed();
+		embed
+			.setTitle(title || 'Ainsley')
+			.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+			.setDescription(message)
+			.setFooter('By Willyb321', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+			.setTimestamp()
+			.addField('Event', event);
+
+		channel.send({embed});
 	}
 }

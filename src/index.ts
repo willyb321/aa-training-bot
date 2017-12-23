@@ -89,7 +89,7 @@ function stfuTrue(newUser: Discord.GuildMember) {
 	newUser.user.username = _.escapeRegExp(newUser.user.username);
 	newUser.user.username = newUser.user.username.replace('/', '+');
 	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
-	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
+	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`, `STFUing ${newUser.user.tag}`, 'STFU');
 	setTimeout(() => {
 		if (newUser.voiceChannel) {
 			const msg = `Shut the fuck up ${newUser.user.username}`;

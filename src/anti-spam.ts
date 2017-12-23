@@ -101,7 +101,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		message.member.addRole(mutedRole, 'Spammed text')
 			.then(() => {
 				stfuInit(message.member, message.member);
-				botLog(`Muting: ${message.author.tag}\nReason: Spammed some text a bit.\nMute will be removed in 30 seconds.`);
+				botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, 'Text spam mute', 'Reason: Spammed text.');
 				setTimeout(() => {
 					message.member.removeRole(mutedRole, 'Spammed text')
 						.then(() => {
