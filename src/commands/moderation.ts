@@ -35,14 +35,16 @@ export function modReport(message: Discord.Message) {
 }
 
 export function isItOof(message: Discord.Message) {
-	message.content = _.deburr(message.content);
-	if (message.content.startsWith('o') && message.content.endsWith('f') && message.content.search('oof') > -1) {
+	let oofedContent = message.content;
+	oofedContent = _.deburr(oofedContent);
+	oofedContent = _.words(oofedContent).join(' ');
+	if (oofedContent.startsWith('o') && oofedContent.endsWith('f') && oofedContent.search('oof') > -1) {
 		return true
 	}
-	if (message.content.search(`🇴`) > -1 && message.content.search('🇫') > -1) {
+	if (oofedContent.search(`🇴`) > -1 && oofedContent.search('🇫') > -1) {
 		return true
 	}
-	return _.indexOf(oofs, message.content.toLowerCase()) >= 0;
+	return _.indexOf(oofs, oofedContent.toLowerCase()) >= 0;
 }
 
 export function noOof(message: Discord.Message) {
