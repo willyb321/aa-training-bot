@@ -186,14 +186,9 @@ client.on('message', (message: Discord.Message) => {
 	}
 	if (message.channel.type === 'dm') {
 		commands.isItOof(message);
-		commands.modReport(message)
-			.then(() => {
-				currentStatus.currentDms[message.author.id] = message;
-				return;
-			})
-			.catch(err => {
-				Raven.captureException(err);
-			});
+		commands.modReport(message);
+		currentStatus.currentDms[message.author.id] = message;
+		return;
 	}
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return;
