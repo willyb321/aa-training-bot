@@ -181,7 +181,7 @@ client.on('ready', () => {
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
-	if (message.author.id === client.user.id) {
+	if (message.author.id === client.user.id || message.member.roles.get(config.botRoleID)) {
 		return;
 	}
 	if (message.channel.type === 'dm') {
