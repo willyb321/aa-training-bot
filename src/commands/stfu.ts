@@ -16,7 +16,7 @@ Raven.config(config.ravenDSN, {
 
 
 export const stfuInterval: number = 60000;
-const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584'];
+const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584', '394325522575785984'];
 
 export function stfu(message: Discord.Message) {
 	const user = message.mentions.members.first();
