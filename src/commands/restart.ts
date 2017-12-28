@@ -20,7 +20,9 @@ export function restart(message: Discord.Message) {
 		return;
 	}
 	console.log('Restarting');
-	client.destroy()
+	message.channel.send(':wave:')
+	.then(() => {
+		client.destroy()
 		.then(() => {
 			process.exit(0);
 		})
@@ -28,4 +30,8 @@ export function restart(message: Discord.Message) {
 			Raven.captureException(err);
 			process.exit(1);
 		});
+	}).catch(err => {
+		Raven.captureException(err);
+		process.exit(1);
+	});
 }
