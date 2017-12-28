@@ -308,6 +308,10 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		return commands.restart(message);
 	}
+	if (message.content === '!status') {
+		// Send "pong" to the same channel
+		return commands.status(message);
+	}
 	// if (message.content.startsWith('!')) {
 	// 	return message.reply('whadiyatalkinabeet');
 	// }
