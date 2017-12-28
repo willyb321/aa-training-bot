@@ -23,7 +23,7 @@ export function help(message: Discord.Message) {
 		.addField('!reset', 'Reset the session.')
 		.addField('!rub [@people]', 'Give your meat a good old rub..')
 		.addField('!stfu [@people]', 'Yes.')
-		.addField('!restart', 'Restart the bot.')
+		.addField('!!restart', 'Restart the bot.')
 		.addField('!status', 'Get bots current status.');
 	return message.reply({embed});
 
