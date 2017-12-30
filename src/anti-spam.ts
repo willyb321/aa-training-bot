@@ -100,8 +100,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		}
 		message.member.addRole(mutedRole, 'Spammed text')
 			.then(() => {
-				stfuInit(message.member, message.member);
-				botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, 'Text spam mute', 'Reason: Spammed text.');
+				botLog(`Muting ${message.author.tag}`, 'Text spam mute', 'Reason: Spammed text.');
 				setTimeout(() => {
 					message.member.removeRole(mutedRole, 'Spammed text')
 						.then(() => {
@@ -110,7 +109,8 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 						.catch(err => {
 							Raven.captureException(err);
 						});
-				}, 90000);
+				}, config.muteMS);
+				stfuInit(message.member, message.member);
 			})
 			.catch(err => {
 				Raven.captureException(err);

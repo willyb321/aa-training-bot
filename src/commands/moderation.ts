@@ -81,26 +81,26 @@ export function noSpamPls(message: Discord.Message) {
 		if (currentStatus.currentSpams[message.author.id].roleMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, '@User Mute', 'Reason: Spammed roles more than 3 times in 30 seconds');
+			botLog(`Muting ${message.author.tag}`, 'Text spam mute', 'Reason: Spammed roles more than 3 times in 30 seconds');
 			message.member.addRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed roles more than 3 times in 30 seconds');
 				currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
 				currentStatus.currentSpams[message.author.id].muted = false;
-			}, 30000);
+			}, config.muteMS);
 		}
 	});
 	message.mentions.users.array().forEach(elem => {
 		if (currentStatus.currentSpams[message.author.id].userMentions[elem.id] > 3 && currentStatus.currentSpams[message.author.id].currentTime.getMilliseconds() - new Date().getMilliseconds() < 30000) {
 			console.log(`Muting this guy: ${message.author.tag}`);
 			currentStatus.currentSpams[message.author.id].muted = true;
-			botLog(`Mute will be removed in 30 seconds.`, `Muting ${message.author.tag}`, '@Role Mute', 'Reason: Spammed users more than 3 times in 30 seconds');
+			botLog(`Muting ${message.author.tag}`, 'Text spam mute', 'Reason: Spammed users more than 3 times in 30 seconds');
 			message.member.addRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');
 			setTimeout(() => {
 				message.member.removeRole(mutedRole, 'Spammed users more than 3 times in 30 seconds');
 				currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
 				currentStatus.currentSpams[message.author.id].muted = false;
-			}, 30000);
+			}, config.muteMS);
 		}
 	});
 }

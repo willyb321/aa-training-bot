@@ -5,6 +5,7 @@
 	"allowedServers": [],
 	"modChannel: "",
 	"paradigmID": "",
-	"token": ""
+	"token": "",
+	"muteMS": 30000
 
 }
