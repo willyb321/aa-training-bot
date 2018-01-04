@@ -4,28 +4,31 @@
 /**
  * ignore
  */
-import {currentStatus} from '../utils';
+import {config, currentStatus} from '../utils';
 import * as Discord from 'discord.js';
 import * as _ from 'lodash';
+import * as Raven from "raven";
 
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
 export function teams(message: Discord.Message) {
 	if (!currentStatus.session) {
 		message.channel.send('No session running!');
 		return;
 	}
 	if (currentStatus.currentUsers.length <= 1) {
-		message.reply('Get some more people!');
-		return;
+		return message.reply('Get some more people!');
 	}
 	const split = message.content.split(' ');
 	let teamsNumber: number;
 	if (split[1]) {
 		try {
 			teamsNumber = parseInt(split[1]);
-		} catch (e) {
-			console.log(e);
+		} catch (err) {
+			Raven.captureException(err);
 		}
-		if (isNaN(teamsNumber) || !teamsNumber) {
+		if (isNaN(teamsNumber) || !teamsNumber || teamsNumber < 2) {
 			teamsNumber = 2;
 		}
 		Math.round((currentStatus.currentUsers.length / teamsNumber));
@@ -46,18 +49,27 @@ export function teams(message: Discord.Message) {
 		currentStatus.teams = _.chunk(currentStatus.currentUsers, Math.ceil(currentStatus.currentUsers.length / teamsNumber));
 		currentStatus.teamsNumber = currentStatus.teams.length;
 	}
-	console.log(currentStatus.teamsNumber);
+	const embed = new Discord.RichEmbed();
 	let teamMessage = `${currentStatus.teamsNumber} Teams:\n\n`;
 	if (!currentStatus.teams) {
 		message.channel.send('Use !teams [number of teams] first.');
 		return;
 	}
+	embed
+		.setTitle('Training Session Teams')
+		.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+		.setDescription(`${teamsNumber} teams`)
+		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
+		.setTimestamp();
+
 	currentStatus.teams.forEach((elem, index) => {
+		let inTeam = [];
 		teamMessage += `Team ${index + 1}:\n`;
-		elem.forEach((user, index) => {
-			teamMessage += `${user.toString()}\n`;
+		elem.forEach((user: Discord.User) => {
+			inTeam.push(user.toString());
 		});
+		embed.addField(`Team ${index + 1}`, inTeam.join('\n'));
 	});
-	currentStatus.teamMessage = teamMessage;
-	message.channel.send(currentStatus.teamMessage);
+	currentStatus.teamMessage = embed;
+	message.channel.send({embed: currentStatus.teamMessage});
 }

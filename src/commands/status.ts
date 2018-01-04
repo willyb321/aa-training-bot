@@ -15,7 +15,7 @@ export function status(message: Discord.Message) {
 		.setDescription('Ainsley Status')
 		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
 		.setTimestamp()
-		.addField('//TODO', 'Add some stuff here.')
+		.addField('//TODO', 'Add some stuff here.');
 	return message.reply({embed});
 
 }

@@ -12,7 +12,6 @@ import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
 import * as AudioSprite from 'audiosprite-pkg';
-meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 import {botLog, config, currentStatus} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
@@ -20,6 +19,8 @@ import {tmpdir} from 'os';
 import antiSpam, {antiSpamOpts} from './anti-spam';
 import {pvpVideoID} from "./commands";
 import {existsSync} from "fs";
+
+meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -316,6 +317,12 @@ client.on('message', (message: Discord.Message) => {
 	// 	return message.reply('whadiyatalkinabeet');
 	// }
 });
-console.log(commands);
 // Log our bot in
-client.login(token);
+client.login(token)
+	.then(() => {
+		console.log(`Ainsley logged in.`)
+	})
+	.catch((err: Error) => {
+		Raven.captureException(err);
+		process.exit(1);
+	});

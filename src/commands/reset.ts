@@ -16,7 +16,7 @@ export function reset(message) {
 	currentStatus.currentInstanced = [];
 	currentStatus.currentReady = [];
 	currentStatus.teams = [];
-	currentStatus.teamMessage = '';
+	currentStatus.teamMessage = undefined;
 	currentStatus.teamsNumber = 2;
 	message.reply('Training session stopped. Use !start to start another.');
 }

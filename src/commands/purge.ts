@@ -24,8 +24,8 @@ export function purge(message: Discord.Message) {
 		limit = 25;
 	}
 	message.channel.fetchMessages({limit: limit + 1})
-	.then(messages => message.channel.bulkDelete(messages))
-	.catch(err => {
-		Raven.captureException(err);
-	});
+		.then(messages => message.channel.bulkDelete(messages))
+		.catch(err => {
+			Raven.captureException(err);
+		});
 }

@@ -21,14 +21,29 @@ export const db: dbInterface = {
 };
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
 
-export const currentStatus = {
+export interface IcurrentStatus {
+	session: boolean;
+	currentUsers: Discord.User[];
+	teams: Discord.User[][];
+	lastStfu: number;
+	teamsNumber: number;
+	currentInstanced: Discord.User[];
+	currentReady: Discord.User[];
+	teamMessage: Discord.RichEmbed;
+	currentSpams: {};
+	currentDms: {};
+	replies: string[];
+	inVoice: boolean;
+}
+
+export const currentStatus: IcurrentStatus = {
 	session: false,
 	currentUsers: [],
 	teams: undefined,
 	teamsNumber: 2,
 	currentInstanced: [],
 	currentReady: [],
-	teamMessage: '',
+	teamMessage: null,
 	currentSpams: {},
 	currentDms: {},
 	replies,
@@ -39,7 +54,9 @@ export const currentStatus = {
 export const chunk = (target, size) => {
 	return target.reduce((memo, value, index) => {
 		// Here it comes the only difference
-		if (index % (target.length / size) == 0 && index !== 0) { memo.push([]); }
+		if (index % (target.length / size) == 0 && index !== 0) {
+			memo.push([]);
+		}
 		memo[memo.length - 1].push(value);
 		return memo;
 	}, [[]]);

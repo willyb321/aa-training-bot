@@ -15,7 +15,7 @@ export function help(message: Discord.Message) {
 		.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
 		.setTimestamp()
 		.addField('!start', 'Start a training session')
-		.addField('reg[ister] [@people]', 'Register yourself or others for a training session.')
+		.addField('!reg[ister] [@people]', 'Register yourself or others for a training session.')
 		.addField('!i[nstanced] [@people]', 'Mark as instanced.')
 		.addField('!r[eady] [@people]', 'Mark as ready to shoot.')
 		.addField('!ir [@people]', 'Mark as instanced and ready to shoot.')

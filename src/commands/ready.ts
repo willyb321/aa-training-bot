@@ -4,8 +4,13 @@
 /**
  * ignore
  */
-import {currentStatus} from '../utils';
+import {config, currentStatus} from '../utils';
 import * as Discord from 'discord.js';
+import * as Raven from "raven";
+
+Raven.config(config.ravenDSN, {
+	autoBreadcrumbs: true
+}).install();
 
 export function ready(message: Discord.Message) {
 	if (!currentStatus.session) {
@@ -30,10 +35,19 @@ export function ready(message: Discord.Message) {
 	}
 	if (currentStatus.currentInstanced.find(elem => elem === message.author)) {
 		currentStatus.currentReady.push(message.author);
-		message.reply('Registered as ready.');
-		message.channel.send(`Currently Registered: ${currentStatus.currentUsers.length}\nCurrently Instanced: ${currentStatus.currentInstanced.length}\nCurrently Ready: ${currentStatus.currentReady.length}`);
+		message.reply('Registered as ready.')
+			.then(() => {
+				message.channel.send(`Currently Registered: ${currentStatus.currentUsers.length}\nCurrently Instanced: ${currentStatus.currentInstanced.length}\nCurrently Ready: ${currentStatus.currentReady.length}`);
+			})
+			.catch((err: Error) => {
+				Raven.captureException(err);
+			});
 	} else {
-		message.reply('Not instanced, use !i[nstanced] to register instanced');
-		message.channel.send(`Currently Registered: ${currentStatus.currentUsers.length}\nCurrently Instanced: ${currentStatus.currentInstanced.length}\nCurrently Ready: ${currentStatus.currentReady.length}`);
+		message.reply('Not instanced, use !i[nstanced] to register instanced')
+			.then(() => {
+				message.channel.send(`Currently Registered: ${currentStatus.currentUsers.length}\nCurrently Instanced: ${currentStatus.currentInstanced.length}\nCurrently Ready: ${currentStatus.currentReady.length}`);
+			}).catch((err: Error) => {
+			Raven.captureException(err);
+		});
 	}
 }
