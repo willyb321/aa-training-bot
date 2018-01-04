@@ -22,7 +22,7 @@
     "erlpack": "github:hammerandchisel/erlpack",
     "ffmpeg-binaries": "^3.2.2-3",
     "leven": "^2.1.0",
-    "libsodium-wrappers": "^0.7.3",
+    "libsodium-wrappers": "^0.5.4",
     "lodash": "^4.17.4",
     "mespeak": "github:willyb321/mespeak",
     "nedb": "^1.8.0",
