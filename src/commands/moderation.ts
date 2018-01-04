@@ -18,7 +18,7 @@ Raven.config(config.ravenDSN, {
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
-const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf'];
+const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf', '()()|=', 'οοf'];
 const unicodeOofs = [];
 export function modReport(message: Discord.Message) {
 	if (isItOof(message)) {

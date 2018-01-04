@@ -7,7 +7,7 @@
 // Import modules
 import 'source-map-support/register';
 import * as Discord from 'discord.js';
-import * as commands from './commands';
+import * as Commands from './commands';
 import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
@@ -29,7 +29,6 @@ Raven.config(config.ravenDSN, {
 // Create an instance of a Discord client
 export const client = new Discord.Client();
 const {allowedServers, token} = config;
-// The token of your bot - https://discordapp.com/developers/applications/me
 
 process.on('uncaughtException', (err: Error) => {
 	Raven.captureException(err);
@@ -65,8 +64,8 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	}
 	const now = Math.floor(Date.now());
 	if (!joined && newUser.voiceChannel !== undefined) {
-		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
-			console.log(`Not STFUing since ${commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
+		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
+			console.log(`Not STFUing since ${Commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -81,8 +80,8 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 		return;
 	}
 	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
-		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= commands.stfuInterval) {
-			console.log(`Not STFUing since ${commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
+		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
+			console.log(`Not STFUing since ${config.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -91,7 +90,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	}
 }
 
-function stfuTrue(newUser: Discord.GuildMember) {
+export function stfuTrue(newUser: Discord.GuildMember) {
 	newUser.user.username = _.escapeRegExp(newUser.user.username);
 	newUser.user.username = newUser.user.username.replace('/', '+');
 	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
@@ -186,8 +185,8 @@ client.on('message', (message: Discord.Message) => {
 		return;
 	}
 	if (message.channel.type === 'dm') {
-		commands.isItOof(message);
-		commands.modReport(message);
+		Commands.isItOof(message);
+		Commands.modReport(message);
 		currentStatus.currentDms[message.author.id] = message;
 		return;
 	}
@@ -198,7 +197,7 @@ client.on('message', (message: Discord.Message) => {
 		return;
 	}
 	if (message.channel.id === pvpVideoID) {
-		return commands.moderatePVP(message);
+		return Commands.moderatePVP(message);
 	}
 	if (!currentStatus.currentSpams[message.author.id]) {
 		currentStatus.currentSpams[message.author.id] = {
@@ -229,20 +228,20 @@ client.on('message', (message: Discord.Message) => {
 		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
 	});
 	message.content = message.content.toLowerCase();
-	if (commands.isItOof(message)) {
-		return commands.noOof(message);
+	if (Commands.isItOof(message)) {
+		return Commands.noOof(message);
 	}
-	commands.noSpamPls(message);
+	Commands.noSpamPls(message);
 	if (message.content.startsWith('!stfu')) {
 		// Send "pong" to the same channel
-		return commands.stfu(message);
+		return Commands.stfu(message);
 	}
 	if (message.content.startsWith('!rub') || message.content.startsWith('!meat')) {
 		// Send "pong" to the same channel
-		return commands.meat(message);
+		return Commands.meat(message);
 	}
 	if (message.content.startsWith('!purge')) {
-		return commands.purge(message);
+		return Commands.purge(message);
 	}
 
 	//TODO add some replies
@@ -253,65 +252,65 @@ client.on('message', (message: Discord.Message) => {
 	// If the message is "!start"
 	if (message.content === '!start') {
 		// Send "pong" to the same channel
-		return commands.start(message);
+		return Commands.start(message);
 	}
 	if (message.content.startsWith('!register') || message.content.startsWith('!reg')) {
 		// Send "pong" to the same channel
-		return commands.register(message);
+		return Commands.register(message);
 	}
 	if (message.content.startsWith('!unregister') || message.content.startsWith('!unreg')) {
 		// Send "pong" to the same channel
-		return commands.unregister(message);
+		return Commands.unregister(message);
 	}
 	if (message.content === '!who') {
 		// Send "pong" to the same channel
-		return commands.who(message);
+		return Commands.who(message);
 	}
 	if (message.content.startsWith('!teams')) {
 		// Send "pong" to the same channel
-		return commands.teams(message);
+		return Commands.teams(message);
 	}
 	if (message.content.startsWith('!rating')) {
 		// Send "pong" to the same channel
-		return commands.rating(message);
+		return Commands.rating(message);
 	}
 	if (message.content.startsWith('!remove')) {
 		// Send "pong" to the same channel
-		return commands.remove(message);
+		return Commands.remove(message);
 	}
 	if (message.content === '!instanced' || message.content === '!i') {
 		// Send "pong" to the same channel
-		return commands.instanced(message);
+		return Commands.instanced(message);
 	}
 	if (message.content === '!ready' || message.content === '!r') {
 		// Send "pong" to the same channel
-		return commands.ready(message);
+		return Commands.ready(message);
 	}
 	if (message.content.startsWith('!ir')) {
 		// Send "pong" to the same channel
-		commands.instanced(message);
-		commands.ready(message);
+		Commands.instanced(message);
+		Commands.ready(message);
 		return;
 	}
 	if (message.content === '!go') {
 		// Send "pong" to the same channel
-		return commands.go(message);
+		return Commands.go(message);
 	}
 	if (message.content === '!reset') {
 		// Send "pong" to the same channel
-		return commands.reset(message);
+		return Commands.reset(message);
 	}
 	if (message.content === '!help') {
 		// Send "pong" to the same channel
-		return commands.help(message);
+		return Commands.help(message);
 	}
 	if (message.content === '!!restart') {
 		// Send "pong" to the same channel
-		return commands.restart(message);
+		return Commands.restart(message);
 	}
 	if (message.content === '!status') {
 		// Send "pong" to the same channel
-		return commands.status(message);
+		return Commands.status(message);
 	}
 	// if (message.content.startsWith('!')) {
 	// 	return message.reply('whadiyatalkinabeet');

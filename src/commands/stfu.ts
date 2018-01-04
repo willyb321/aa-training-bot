@@ -26,7 +26,6 @@ export function stfu(message: Discord.Message) {
 	if (!user) {
 		return;
 	}
-	const now = Math.floor(Date.now());
 	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && user.voiceChannel) {
 		console.log('Doing it!');
 		stfuInit(user, user);
@@ -47,7 +46,7 @@ export function meat(message: Discord.Message) {
 		return;
 	}
 	const now = Math.floor(Date.now());
-	if (currentStatus.lastStfu && now - currentStatus.lastStfu <= stfuInterval) {
+	if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
 		console.log(`Its only been: ${currentStatus.lastStfu - now} since last stfu.`);
 		console.log('Not STFUing.');
 		return;
@@ -78,7 +77,7 @@ export function meat(message: Discord.Message) {
 						currentStatus.inVoice = false;
 					}, 2000);
 				});
-				voiceDis.on('speaking', yesorno => {
+				voiceDis.on('speaking', () => {
 					console.log('Speaking');
 				});
 				voiceDis.on('error', err => {

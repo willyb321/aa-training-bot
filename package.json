@@ -25,6 +25,7 @@
     "libsodium-wrappers": "^0.5.4",
     "lodash": "^4.17.4",
     "mespeak": "github:willyb321/mespeak",
+    "mongoose": "^5.0.0-rc2",
     "nedb": "^1.8.0",
     "on-change": "^0.1.0",
     "opusscript": "0.0.6",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/leven": "^2.1.1",
     "@types/lodash": "^4.14.91",
+    "@types/mongoose": "^4.7.32",
     "@types/nedb": "^1.8.5",
     "@types/node": "^8.5.5",
     "@types/npm": "^2.0.29",
