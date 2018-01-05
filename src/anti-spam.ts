@@ -47,6 +47,9 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 		if (message.author.id === bot.user.id) {
 			return;
 		}
+		if (message.attachments.first() && [...message.content].length === 0) {
+			return;
+		}
 		const now = Math.floor(Date.now());
 		authors.push({
 			time: now,
