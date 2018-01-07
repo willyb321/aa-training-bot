@@ -19,7 +19,6 @@ import {match} from "minimatch";
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
-later.date.localTime();
 export const announcements = [];
 
 mongoose.connect(config.mongoURL);
