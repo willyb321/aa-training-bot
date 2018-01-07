@@ -317,10 +317,12 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content.startsWith('!addschedule')) {
 		// Send "pong" to the same channel
 		Admin.addSchedule(message);
+		return
 	}
 	if (message.content.startsWith('!delschedule')) {
 		// Send "pong" to the same channel
 		Admin.removeSchedule(message);
+		return;
 	}
 	if (message.content.startsWith('!sched')) {
 		// Send "pong" to the same channel
