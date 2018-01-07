@@ -19,6 +19,7 @@ import {tmpdir} from 'os';
 import antiSpam, {antiSpamOpts} from './anti-spam';
 import {pvpVideoID} from "./commands";
 import {existsSync} from "fs";
+import * as Admin from './admin/schedule';
 
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 
@@ -177,6 +178,7 @@ client.on('ready', () => {
 		duplicates: 7
 	};
 	antiSpam(client, opts);
+	Admin.addAllAnnouncementsToMemory();
 });
 
 // Create an event listener for messages
@@ -274,7 +276,7 @@ client.on('message', (message: Discord.Message) => {
 		// Send "pong" to the same channel
 		return Commands.rating(message);
 	}
-	if (message.content.startsWith('!remove')) {
+	if (message.content.startsWith('!remove ')) {
 		// Send "pong" to the same channel
 		return Commands.remove(message);
 	}
@@ -311,6 +313,18 @@ client.on('message', (message: Discord.Message) => {
 	if (message.content === '!status') {
 		// Send "pong" to the same channel
 		return Commands.status(message);
+	}
+	if (message.content.startsWith('!addschedule')) {
+		// Send "pong" to the same channel
+		Admin.addSchedule(message);
+	}
+	if (message.content.startsWith('!delschedule')) {
+		// Send "pong" to the same channel
+		Admin.removeSchedule(message);
+	}
+	if (message.content.startsWith('!sched')) {
+		// Send "pong" to the same channel
+		Admin.getSchedule(message);
 	}
 	// if (message.content.startsWith('!')) {
 	// 	return message.reply('whadiyatalkinabeet');

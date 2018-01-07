@@ -5,6 +5,7 @@
  * ignore
  */
 import * as Discord from 'discord.js';
+import {config} from "../utils";
 
 export function help(message: Discord.Message) {
 	const embed = new Discord.RichEmbed();
@@ -23,8 +24,13 @@ export function help(message: Discord.Message) {
 		.addField('!reset', 'Reset the session.')
 		.addField('!rub [@people]', 'Give your meat a good old rub..')
 		.addField('!stfu [@people]', 'Yes.')
-		.addField('!!restart', 'Restart the bot.')
-		.addField('!status', 'Get bots current status.');
+		.addField('!!restart', 'Restart the bot.');
+	if (message.member.roles.get(config.adminRoleID)) {
+		embed
+			.addField('!schedule', 'Get bots current announcement schedule.')
+			.addField('!addschedule [time expression]. [message]. [yes for at everyone].', 'Add an announcement. The `.` is very important.')
+			.addField('!delschedule [id1] [id2] [...]', 'Get bots current status.');
+	}
 	return message.reply({embed});
 
 }

@@ -10,15 +10,7 @@ import {client} from './index';
 
 export const config = require('../config.json');
 
-export interface dbInterface {
-	sessions: Datastore;
-	ratings: Datastore;
-}
 
-export const db: dbInterface = {
-	sessions: new Datastore({filename: './sessions.db', autoload: true}),
-	ratings: new Datastore({filename: './ratings.db', autoload: true})
-};
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
 
 export interface IcurrentStatus {

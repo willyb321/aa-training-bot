@@ -17,9 +17,8 @@ Raven.config(config.ravenDSN, {
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 
-const authors = [];
+const authors: IAuthors[] = [];
 const warned: string[] = [];
-const banned: string[] = [];
 const messagelog = [];
 
 export interface antiSpamOpts {
@@ -28,11 +27,16 @@ export interface antiSpamOpts {
 	duplicates: number;
 }
 
+export interface IAuthors {
+	time: number;
+	author: string;
+}
+
 /**
  * Add simple spam protection to discord server.
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
- * @param  {any} bot - The discord.js Client/bot
- * @param  {object} options - Optional (Custom configuration options)
+ * @param  {Discord.Client} bot - The discord.js Client/bot
+ * @param  {antiSpamOpts} options - Optional (Custom configuration options)
  */
 export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 	// Set options
@@ -40,7 +44,7 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 	const interval = (options && options.interval) || 1000;
 	const maxDuplicatesWarning = (options && options.duplicates || 7);
 
-	bot.on('message', message => {
+	bot.on('message', (message: Discord.Message) => {
 		if (checkAllowed(message)) {
 			return;
 		}
@@ -82,9 +86,8 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 				}
 			}
 			else if (authors[i].time < now - interval) {
+				warned.splice(warned.indexOf(authors[i].author));
 				authors.splice(i);
-				warned.splice(warned.indexOf(authors[i]));
-				banned.splice(warned.indexOf(authors[i]));
 			}
 			if (messagelog.length >= 100) {
 				messagelog.shift();
@@ -94,11 +97,19 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 
 	/**
 	 * Mute a user
-	 * @param {any} message The message containing info how to mute user.
+	 * @param {Discord.Message} message The message containing user info.
 	 */
-	function mute(message: Discord.Message) {
-		const mutedRole: any = client.guilds.get(guild).roles.get(mutedRoleId);
-		if (message.member.roles.get(mutedRole.id)) {
+	function mute(message: Discord.Message): void {
+		let mutedRole: Discord.Role;
+		try {
+			mutedRole = client.guilds.get(guild).roles.get(mutedRoleId);
+		} catch(err) {
+			Raven.captureException(err);
+		}
+		if (message.member.roles.get(mutedRoleId)) {
+			return;
+		}
+		if (!mutedRole) {
 			return;
 		}
 		message.member.addRole(mutedRole, 'Spammed text')
