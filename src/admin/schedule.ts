@@ -19,7 +19,7 @@ import {match} from "minimatch";
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
-export const announcements = [];
+export const announcements: later.Timer[] = [];
 
 mongoose.connect(config.mongoURL);
 const db = mongoose.connection;

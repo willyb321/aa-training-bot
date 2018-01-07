@@ -1,3 +1,9 @@
+/**
+ * @module Commands
+ */
+/**
+ * ignore
+ */
 import * as Discord from 'discord.js';
 import * as Raven from 'raven';
 import {config} from '../utils';
