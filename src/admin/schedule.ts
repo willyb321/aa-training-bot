@@ -50,7 +50,7 @@ export function addSchedule(message: Discord.Message) {
 	if (!message.member.roles.get(config.adminRoleID)) {
 		return;
 	}
-	message.content = message.content.replace('!addschedule', '').trim();
+	message.content = message.content.replace('!addschedule ', '').trim();
 	const doc = nlp(message.content);
 	const matches = doc.sentences().out('array');
 	if (matches.length < 2) {
