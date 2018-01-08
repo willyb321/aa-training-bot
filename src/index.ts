@@ -174,7 +174,7 @@ client.on('ready', () => {
 		});
 	const opts: antiSpamOpts = {
 		warnBuffer: 10,
-		interval: 20000,
+		interval: 15000,
 		duplicates: 7
 	};
 	antiSpam(client, opts);

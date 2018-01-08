@@ -17,9 +17,9 @@ Raven.config(config.ravenDSN, {
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 
-const authors: IAuthors[] = [];
-const warned: string[] = [];
-const messagelog = [];
+let authors: IAuthors[] = [];
+let warned: string[] = [];
+let messagelog = [];
 
 export interface antiSpamOpts {
 	warnBuffer: number;
@@ -31,7 +31,7 @@ export interface IAuthors {
 	time: number;
 	author: string;
 }
-
+const timers = [];
 /**
  * Add simple spam protection to discord server.
  * Shamelessly nicked from https://github.com/Michael-J-Scofield/discord-anti-spam
@@ -63,7 +63,12 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 			message: message.content,
 			author: message.author.id
 		});
+		setTimeout(() => {
+			messagelog = [];
+			authors = [];
+			warned = [];
 
+		}, config.muteMS / 2);
 		// Check how many times the same message has been sent.
 		let msgMatch = 0;
 		for (let i = 0; i < messagelog.length; i++) {
@@ -86,11 +91,11 @@ export default function antiSpam(bot: Discord.Client, options: antiSpamOpts) {
 				}
 			}
 			else if (authors[i].time < now - interval) {
-				warned.splice(warned.indexOf(authors[i].author));
-				authors.splice(i);
+				warned.splice(warned.indexOf(authors[i].author), 1);
+				authors.splice(i, 1);
 			}
 			if (messagelog.length >= 100) {
-				messagelog.shift();
+				messagelog = [];
 			}
 		}
 	});
