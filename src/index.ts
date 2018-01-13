@@ -177,7 +177,7 @@ client.on('ready', () => {
 		interval: 15000,
 		duplicates: 7
 	};
-	antiSpam(client, opts);
+	// antiSpam(client, opts);
 	Admin.addAllAnnouncementsToMemory();
 });
 
