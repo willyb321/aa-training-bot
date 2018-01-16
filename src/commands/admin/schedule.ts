@@ -86,6 +86,11 @@ export class AddScheduleCommand extends Commando.Command {
 					type: 'boolean'
 				},
 				{
+					key: 'channel',
+					prompt: 'Channel (use #)?',
+					type: 'channel'
+				},
+				{
 					key: 'message',
 					prompt: 'Message?',
 					type: 'string',
@@ -107,12 +112,12 @@ export class AddScheduleCommand extends Commando.Command {
 		const scheduleDoc = new Schedule({
 			timeExpression: args.time,
 			message: args.message.join(' '),
-			channelId: message.channel.id,
+			channelId: args.channel.id,
 			everyone: args.everyone
 		});
 		scheduleDoc.save()
 			.then( elem => {
-				const annouce = later.setInterval(() => announce(args.message, message.channel.id, args.everyone), parsedTime);
+				const annouce = later.setInterval(() => announce(args.message, args.channel.id, args.everyone), parsedTime);
 				announcements[elem._id] = annouce;
 				message.channel.send(`:ok_hand: Done! Id: ${scheduleDoc._id}`);
 
