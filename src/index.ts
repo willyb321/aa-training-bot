@@ -1,3 +1,4 @@
+///<reference path="../node_modules/@types/node/index.d.ts"/>
 /**
  * @module Index
  */
@@ -6,20 +7,23 @@
  */
 // Import modules
 import 'source-map-support/register';
+import * as Commando from 'discord.js-commando';
 import * as Discord from 'discord.js';
-import * as Commands from './commands';
 import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
 import * as AudioSprite from 'audiosprite-pkg';
-import {botLog, config, currentStatus} from './utils';
+import {botLog, config, currentStatus, isItOof, noOof} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
-import antiSpam, {antiSpamOpts} from './anti-spam';
-import {pvpVideoID} from "./commands";
+// import antiSpam, {antiSpamOpts} from './anti-spam';
+import {moderatePVP, pvpVideoID} from "./pvpmod";
 import {existsSync} from "fs";
-import * as Admin from './admin/schedule';
+import * as Admin from './commands/admin/schedule';
+import {stfuInterval} from "./commands/misc/stfu";
+
+const oneLine = require('common-tags').oneLine;
 
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
 
@@ -28,15 +32,19 @@ Raven.config(config.ravenDSN, {
 }).install();
 
 // Create an instance of a Discord client
-export const client = new Discord.Client();
+export const client = new Commando.Client({
+	owner: '121791193301385216'
+});
 const {allowedServers, token} = config;
 
 process.on('uncaughtException', (err: Error) => {
 	Raven.captureException(err);
+	console.error(err);
 });
 
 process.on('unhandledRejection', (err: Error) => {
 	Raven.captureException(err);
+	console.error(err);
 });
 meSpeak.loadConfig(require('mespeak/src/mespeak_config.json'));
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'), () => {
@@ -66,7 +74,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	const now = Math.floor(Date.now());
 	if (!joined && newUser.voiceChannel !== undefined) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
-			console.log(`Not STFUing since ${Commands.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
+			console.log(`Not STFUing since ${stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
@@ -161,6 +169,46 @@ function stfu(newUser: Discord.GuildMember) {
 		});
 }
 
+client
+	.on('error', console.error)
+	.on('warn', console.warn)
+	.on('debug', console.log)
+	.on('ready', () => {
+		console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
+	})
+	.on('disconnect', () => { console.warn('Disconnected!'); })
+	.on('reconnecting', () => { console.warn('Reconnecting...'); })
+	.on('commandError', (cmd, err) => {
+		if(err instanceof Commando.FriendlyError) return;
+		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
+	})
+	.on('commandBlocked', (msg, reason) => {
+		console.log(oneLine`
+			Command ${msg.command ? `${msg.command.groupID}:${msg.command.memberName}` : ''}
+			blocked; ${reason}
+		`);
+	})
+	.on('commandPrefixChange', (guild, prefix) => {
+		console.log(oneLine`
+			Prefix ${prefix === '' ? 'removed' : `changed to ${prefix || 'the default'}`}
+			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
+		`);
+	})
+	.on('commandStatusChange', (guild, command, enabled) => {
+		console.log(oneLine`
+			Command ${command.groupID}:${command.memberName}
+			${enabled ? 'enabled' : 'disabled'}
+			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
+		`);
+	})
+	.on('groupStatusChange', (guild, group, enabled) => {
+		console.log(oneLine`
+			Group ${group.id}
+			${enabled ? 'enabled' : 'disabled'}
+			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
+		`);
+	});
+
 // The ready event is vital, it means that your bot will only start reacting to information
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
@@ -172,165 +220,38 @@ client.on('ready', () => {
 		.catch(err => {
 			Raven.captureException(err);
 		});
-	const opts: antiSpamOpts = {
-		warnBuffer: 10,
-		interval: 15000,
-		duplicates: 7
-	};
-	// antiSpam(client, opts);
 	Admin.addAllAnnouncementsToMemory();
 });
+
+client.registry
+	.registerGroup('misc', 'misc')
+	.registerGroup('admin', 'admin')
+	.registerDefaults()
+	.registerCommandsIn(join(__dirname, 'commands', 'misc'))
+	.registerCommandsIn(join(__dirname, 'commands', 'admin'));
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
 	if (message.author.id === client.user.id) {
 		return;
 	}
-	if (message.channel.type === 'dm') {
-		Commands.isItOof(message);
-		Commands.modReport(message);
-		currentStatus.currentDms[message.author.id] = message;
+	if (message.member && message.member.roles.get(config.botRoleID)) {
 		return;
 	}
-	if (message.member && message.member.roles.get(config.botRoleID)) {
+	if (!message.guild) {
 		return;
 	}
 	if (_.indexOf(allowedServers, message.guild.id) === -1) {
 		return;
 	}
 	if (message.channel.id === pvpVideoID) {
-		return Commands.moderatePVP(message);
-	}
-	if (!currentStatus.currentSpams[message.author.id]) {
-		currentStatus.currentSpams[message.author.id] = {
-			messages: [],
-			roleMentions: {},
-			userMentions: {},
-			muted: false,
-			currentTime: new Date()
-		};
+		return moderatePVP(message);
 	}
 
-	setTimeout(() => {
-		currentStatus.currentSpams[message.author.id].currentTime = new Date();
-		currentStatus.currentSpams[message.author.id].messages = [];
-	}, 60000);
-
-	currentStatus.currentSpams[message.author.id].messages.push(message);
-	message.mentions.roles.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].roleMentions[elem.id]) {
-			currentStatus.currentSpams[message.author.id].roleMentions[elem.id] = 0;
-		}
-		currentStatus.currentSpams[message.author.id].roleMentions[elem.id]++;
-	});
-	message.mentions.users.array().forEach(elem => {
-		if (!currentStatus.currentSpams[message.author.id].userMentions[elem.id]) {
-			currentStatus.currentSpams[message.author.id].userMentions[elem.id] = 0;
-		}
-		currentStatus.currentSpams[message.author.id].userMentions[elem.id]++;
-	});
 	message.content = message.content.toLowerCase();
-	if (Commands.isItOof(message)) {
-		return Commands.noOof(message);
+	if (isItOof(message)) {
+		return noOof(message);
 	}
-	Commands.noSpamPls(message);
-	if (message.content.startsWith('!stfu')) {
-		// Send "pong" to the same channel
-		return Commands.stfu(message);
-	}
-	if (message.content.startsWith('!rub') || message.content.startsWith('!meat')) {
-		// Send "pong" to the same channel
-		return Commands.meat(message);
-	}
-	if (message.content.startsWith('!purge')) {
-		return Commands.purge(message);
-	}
-
-	//TODO add some replies
-	// if (message.isMentioned(client.user)) {
-	// 	_.shuffle(currentStatus.replies);
-	// 	message.reply(currentStatus.replies[0]);
-	// }
-	// If the message is "!start"
-	if (message.content === '!start') {
-		// Send "pong" to the same channel
-		return Commands.start(message);
-	}
-	if (message.content.startsWith('!register') || message.content.startsWith('!reg')) {
-		// Send "pong" to the same channel
-		return Commands.register(message);
-	}
-	if (message.content.startsWith('!unregister') || message.content.startsWith('!unreg')) {
-		// Send "pong" to the same channel
-		return Commands.unregister(message);
-	}
-	if (message.content === '!who') {
-		// Send "pong" to the same channel
-		return Commands.who(message);
-	}
-	if (message.content.startsWith('!teams')) {
-		// Send "pong" to the same channel
-		return Commands.teams(message);
-	}
-	if (message.content.startsWith('!rating')) {
-		// Send "pong" to the same channel
-		return Commands.rating(message);
-	}
-	if (message.content.startsWith('!remove ')) {
-		// Send "pong" to the same channel
-		return Commands.remove(message);
-	}
-	if (message.content === '!instanced' || message.content === '!i') {
-		// Send "pong" to the same channel
-		return Commands.instanced(message);
-	}
-	if (message.content === '!ready' || message.content === '!r') {
-		// Send "pong" to the same channel
-		return Commands.ready(message);
-	}
-	if (message.content.startsWith('!ir')) {
-		// Send "pong" to the same channel
-		Commands.instanced(message);
-		Commands.ready(message);
-		return;
-	}
-	if (message.content === '!go') {
-		// Send "pong" to the same channel
-		return Commands.go(message);
-	}
-	if (message.content === '!reset') {
-		// Send "pong" to the same channel
-		return Commands.reset(message);
-	}
-	if (message.content === '!help') {
-		// Send "pong" to the same channel
-		return Commands.help(message);
-	}
-	if (message.content === '!!restart') {
-		// Send "pong" to the same channel
-		return Commands.restart(message);
-	}
-	if (message.content === '!status') {
-		// Send "pong" to the same channel
-		return Commands.status(message);
-	}
-	if (message.content.startsWith('!addschedule')) {
-		// Send "pong" to the same channel
-		Admin.addSchedule(message);
-		return
-	}
-	if (message.content.startsWith('!delschedule')) {
-		// Send "pong" to the same channel
-		Admin.removeSchedule(message);
-		return;
-	}
-	if (message.content.startsWith('!sched')) {
-		// Send "pong" to the same channel
-		Admin.getSchedule(message);
-	}
-	// if (message.content.startsWith('!')) {
-	// 	return message.reply('whadiyatalkinabeet');
-	// }
 });
 // Log our bot in
 client.login(token)

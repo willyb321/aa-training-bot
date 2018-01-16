@@ -5,7 +5,7 @@
  * ignore
  */
 import * as Discord from 'discord.js';
-import {botLog, config} from '../utils';
+import {botLog, config} from './utils';
 import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
@@ -15,6 +15,9 @@ Raven.config(config.ravenDSN, {
 export const pvpVideoID = '382661612223332353';
 
 export function moderatePVP(message: Discord.Message) {
+	if (!message || !message.channel) {
+		return;
+	}
 	if (message.channel.id !== pvpVideoID) {
 		return;
 	}
