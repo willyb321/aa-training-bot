@@ -6,13 +6,11 @@
  */
 import * as Discord from 'discord.js';
 import {client} from '../../index';
-import {config} from "../../utils";
+import {config} from '../../utils';
 import * as mongoose from 'mongoose';
-import * as nlp from 'compromise';
 import * as later from 'later';
-import * as Raven from "raven";
+import * as Raven from 'raven';
 import * as autoIncrement from 'mongoose-auto-increment';
-import _ = require("lodash");
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
@@ -51,19 +49,18 @@ export function addAllAnnouncementsToMemory() {
 		} else {
 			docs.forEach((elem: ISchedule) => {
 				const parsedTime = later.parse.text(elem.timeExpression);
-				const annouce = later.setInterval(() => {announce(elem.message, elem.channelId, elem.everyone)}, parsedTime);
+				const annouce = later.setInterval(() => {announce(elem.message, elem.channelId, elem.everyone);}, parsedTime);
 				announcements[elem._id] = annouce;
 			});
 		}
-	})
+	});
 }
 
 function announce(message: string, channelId: string, everyone: boolean) {
 	console.log('Announcing!');
-	const channel: any = client.guilds.get(config.paradigmID).channels.get(channelId);
+	const channel = client.guilds.get(config.paradigmID).channels.get(channelId);
 	channel.send(`${message.toString()}\n${everyone ? '@everyone' : ''}`);
 }
-
 
 import * as Commando from 'discord.js-commando';
 
@@ -75,7 +72,7 @@ export class AddScheduleCommand extends Commando.Command {
 			memberName: 'addschedule',
 			description: 'Add a message to schedule.',
 			details: 'Add a message to schedule.',
-			examples: [`addschedule 'at 8:00 am on saturday' 'true' 'first training session of the day starts now'`],
+			examples: ['addschedule \'at 8:00 am on saturday\' \'true\' \'first training session of the day starts now\''],
 			argsSingleQuotes: true,
 			args: [
 				{
@@ -114,7 +111,7 @@ export class AddScheduleCommand extends Commando.Command {
 			everyone: args.everyone
 		});
 		scheduleDoc.save()
-			.then((elem) => {
+			.then( elem => {
 				const annouce = later.setInterval(() => announce(args.message, message.channel.id, args.everyone), parsedTime);
 				announcements[elem._id] = annouce;
 				message.channel.send(`:ok_hand: Done! Id: ${scheduleDoc._id}`);
@@ -122,7 +119,7 @@ export class AddScheduleCommand extends Commando.Command {
 			})
 			.catch(err => {
 				Raven.captureException(err);
-			})
+			});
 	}
 }
 export class DelScheduleCommand extends Commando.Command {
@@ -133,7 +130,7 @@ export class DelScheduleCommand extends Commando.Command {
 			memberName: 'delschedule',
 			description: 'Remove from schedule.',
 			details: 'Remove from schedule.',
-			examples: [`delschedule 1`],
+			examples: ['delschedule 1'],
 			argsSingleQuotes: true,
 			args: [
 				{
@@ -164,7 +161,7 @@ export class DelScheduleCommand extends Commando.Command {
 					})
 					.catch(err => {
 						Raven.captureException(err);
-					})
+					});
 			}
 		} else {
 			Schedule.findOneAndRemove({_id: matches[0]})
@@ -177,7 +174,7 @@ export class DelScheduleCommand extends Commando.Command {
 				})
 				.catch(err => {
 					Raven.captureException(err);
-				})
+				});
 		}
 	}
 }
@@ -190,7 +187,7 @@ export class GetScheduleCommand extends Commando.Command {
 			memberName: 'sched',
 			description: 'Get schedule.',
 			details: 'Get schedule.',
-			examples: [`sched`]
+			examples: ['sched']
 		});
 	}
 
@@ -213,11 +210,11 @@ export class GetScheduleCommand extends Commando.Command {
 					embed.addField(`ID: ${elem._id} - Time: ${elem.timeExpression}`, elem.message);
 				});
 				if (docs.length === 0) {
-					embed.addField('Empty', 'No scheduled announcements')
+					embed.addField('Empty', 'No scheduled announcements');
 				}
 				embed.addField('Help with schedules', 'See https://willb.info/s/rJ7u4Xy4z');
 				return message.channel.send({embed});
 			}
-		})
+		});
 	}
 }

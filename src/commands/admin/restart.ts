@@ -5,10 +5,8 @@
  * ignore
  */
 import {config} from '../../utils';
-import * as Discord from 'discord.js';
 import {client} from '../../index';
 import * as Raven from 'raven';
-
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true

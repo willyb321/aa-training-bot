@@ -4,21 +4,18 @@
 /**
  * ignore
  */
-import * as Datastore from 'nedb';
 import * as Discord from 'discord.js';
 import {client} from './index';
-import * as Raven from "raven";
-import * as _ from "lodash";
-
-export const config = require('../config.json');
-
+import * as Raven from 'raven';
+import * as _ from 'lodash';
+import {config} from './config';
+export {config} from './config';
 
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 const botLogId = '383143845841600513';
 const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf', '()()|=', 'οοf', 'Ооf', 'ооf'];
-const unicodeOs = [];
 export interface IcurrentStatus {
 	session: boolean;
 	currentUsers: Discord.User[];
@@ -73,7 +70,7 @@ export function noOof(message: Discord.Message) {
 				});
 		}).catch(err => {
 		console.log(err);
-	})
+	});
 }
 export function isItOof(message: Discord.Message) {
 	let oofedContent = message.content;
@@ -81,18 +78,17 @@ export function isItOof(message: Discord.Message) {
 	oofedContent = oofedContent.toLowerCase();
 	oofedContent = _.words(oofedContent).join('');
 	if (oofedContent.startsWith('o') && oofedContent.endsWith('f') && oofedContent.search('oof') > -1) {
-		return true
+		return true;
 	}
-	if (oofedContent.search(`🇴`) > -1 && oofedContent.search('🇫') > -1) {
-		return true
+	if (oofedContent.search('🇴') > -1 && oofedContent.search('🇫') > -1) {
+		return true;
 	}
 	return _.indexOf(oofs, oofedContent) >= 0;
 }
 
-
 export function botLog(message: string, title: string, event: string, channelId?: string) {
 	const botLogId = '383143845841600513';
-	const channel: any = client.guilds.get(config.paradigmID).channels.get(channelId || botLogId);
+	const channel = client.guilds.get(config.paradigmID).channels.get(channelId || botLogId);
 	if (channel) {
 		const embed = new Discord.RichEmbed();
 		embed

@@ -4,9 +4,7 @@
 /**
  * ignore
  */
-import * as Discord from 'discord.js';
-import {botLog, currentStatus, config} from './utils';
-import {client, stfuInit} from './index';
+import {config} from './utils';
 import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
@@ -16,9 +14,9 @@ Raven.config(config.ravenDSN, {
 const guild = '374103486154932234';
 const mutedRoleId = '383059187942293504';
 
-let authors: IAuthors[] = [];
-let warned: string[] = [];
-let messagelog = [];
+const authors: IAuthors[] = [];
+const warned: string[] = [];
+const messagelog = [];
 
 export interface antiSpamOpts {
 	warnBuffer: number;

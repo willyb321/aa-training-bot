@@ -6,12 +6,12 @@
  */
 import * as Raven from 'raven';
 import {config} from '../../utils';
+import * as Commando from 'discord.js-commando';
+import {client} from '../../index';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
-
-import * as Commando from 'discord.js-commando';
 
 export class PurgeCommand extends Commando.Command {
 	constructor(client) {
@@ -35,7 +35,7 @@ export class PurgeCommand extends Commando.Command {
 	}
 
 	async run(message, args) {
-		if (!message.member.roles.get('374118891854495744')) {
+		if (!client.isOwner(message.author)) {
 			return;
 		}
 		let limit = args.amount;

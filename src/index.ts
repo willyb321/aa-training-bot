@@ -18,10 +18,10 @@ import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
 // import antiSpam, {antiSpamOpts} from './anti-spam';
-import {moderatePVP, pvpVideoID} from "./pvpmod";
-import {existsSync} from "fs";
+import {moderatePVP, pvpVideoID} from './pvpmod';
+import {existsSync} from 'fs';
 import * as Admin from './commands/admin/schedule';
-import {stfuInterval} from "./commands/misc/stfu";
+import {stfuInterval} from './commands/misc/stfu';
 
 const oneLine = require('common-tags').oneLine;
 
@@ -33,11 +33,11 @@ Raven.config(config.ravenDSN, {
 
 // Create an instance of a Discord client
 export const client = new Commando.Client({
-	owner: '121791193301385216'
+	owner: config.owners
 });
 const {allowedServers, token} = config;
 
-process.on('uncaughtException', (err: Error) => {
+process.on('uncaughtException', (err) => {
 	Raven.captureException(err);
 	console.error(err);
 });
@@ -113,13 +113,15 @@ export function stfuTrue(newUser: Discord.GuildMember) {
 				const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
 				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
 				const as = new AudioSprite();
-				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), function (err) {
+				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), err => {
 					if (err) {
 						Raven.captureException(err);
+						console.error(err);
 					}
-					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, function (err) {
+					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, err => {
 						if (err) {
 							Raven.captureException(err);
+							console.error(err);
 						}
 						stfu(newUser);
 					});
@@ -172,14 +174,14 @@ function stfu(newUser: Discord.GuildMember) {
 client
 	.on('error', console.error)
 	.on('warn', console.warn)
-	.on('debug', console.log)
+	.on('debug', process.env.NODE_ENV !== 'production' ? () => null : console.log)
 	.on('ready', () => {
 		console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	})
 	.on('disconnect', () => { console.warn('Disconnected!'); })
 	.on('reconnecting', () => { console.warn('Reconnecting...'); })
 	.on('commandError', (cmd, err) => {
-		if(err instanceof Commando.FriendlyError) return;
+		if (err instanceof Commando.FriendlyError) { return; }
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
 	})
 	.on('commandBlocked', (msg, reason) => {
@@ -256,7 +258,7 @@ client.on('message', (message: Discord.Message) => {
 // Log our bot in
 client.login(token)
 	.then(() => {
-		console.log(`Ainsley logged in.`)
+		console.log('Ainsley logged in.');
 	})
 	.catch((err: Error) => {
 		Raven.captureException(err);
