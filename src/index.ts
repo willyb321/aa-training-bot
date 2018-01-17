@@ -33,7 +33,8 @@ Raven.config(config.ravenDSN, {
 
 // Create an instance of a Discord client
 export const client = new Commando.Client({
-	owner: config.owners
+	owner: config.owners,
+	unknownCommandResponse: false
 });
 const {allowedServers, token} = config;
 
