@@ -212,8 +212,8 @@ export class GetScheduleCommand extends Commando.Command {
 					.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
 					.setTimestamp();
 				docs.forEach((elem: any) => {
-					const next = later.schedule(later.parse.text(elem.timeExpression)).next(1, new Date());
-					embed.addField(`ID: ${elem._id} - Time: ${elem.timeExpression} - Next: ${next[0].toISOString()}`, `Channel: <#${elem.channelId}> - ${elem.message}`);
+					const next: any = later.schedule(later.parse.text(elem.timeExpression)).next(1, new Date());
+					embed.addField(`ID: ${elem._id} - Time: ${elem.timeExpression} - Next: ${next.toISOString()}`, `Channel: <#${elem.channelId}> - ${elem.message}`);
 				});
 				if (docs.length === 0) {
 					embed.addField('Empty', 'No scheduled announcements');
