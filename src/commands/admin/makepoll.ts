@@ -34,7 +34,7 @@ export class PollCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return message.member && message.member.roles.find(elem => elem.id === config.councilID);
+		return !!message.member && !!message.member.roles.find(elem => elem.id === config.councilID);
 	}
 	async run(message, args) {
 		const channel = client.channels.get(config.pollChannelID);

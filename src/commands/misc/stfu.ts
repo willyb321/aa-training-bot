@@ -58,7 +58,7 @@ export class StfuCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
+		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
 	}
 	async run(message, args) {
 		const user = args.user;

@@ -102,7 +102,7 @@ export class AddScheduleCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id)));
+		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 	}
 	async run(message, args) {
 		const parsedTime = later.parse.text(args.time);
