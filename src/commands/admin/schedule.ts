@@ -58,9 +58,10 @@ export function addAllAnnouncementsToMemory() {
 }
 
 function announce(message: string, channelId: string, everyone: boolean) {
-	console.log('Announcing!');
-	const channel = client.guilds.get(config.paradigmID).channels.get(channelId);
-	channel.send(`${message.toString()}\n${everyone ? '@everyone' : ''}`);
+	return undefined
+	// console.log('Announcing!');
+	// const channel = client.guilds.get(config.paradigmID).channels.get(channelId);
+	// channel.send(`${message.toString()}\n${everyone ? '@everyone' : ''}`);
 }
 
 import * as Commando from 'discord.js-commando';
