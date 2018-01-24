@@ -41,7 +41,7 @@ export class PollCommand extends Commando.Command {
 		if (!channel) {
 			return message.channel.send('Had an error. Contact Willy');
 		}
-		return channel.send(`<@${config.councilID}>\nNew Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
+		return channel.send(`<@&${config.councilID}>\nNew Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
 			.then(async poll => {
 				try {
 					await poll.react('👍');
