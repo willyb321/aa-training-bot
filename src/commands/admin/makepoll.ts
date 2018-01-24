@@ -39,13 +39,14 @@ export class PollCommand extends Commando.Command {
 	async run(message, args) {
 		const channel = client.channels.get(config.pollChannelID);
 		if (!channel) {
-			return message.channel.send('Had an error. Contact Willy')
+			return message.channel.send('Had an error. Contact Willy');
 		}
-		return channel.send(`New Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
+		return channel.send(`<@${config.councilID}>\nNew Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
 			.then(async poll => {
 				try {
 					await poll.react('👍');
 					await poll.react('👎');
+					await poll.react('🇵');
 				} catch (err) {
 					console.error(err);
 					Raven.captureException(err);
