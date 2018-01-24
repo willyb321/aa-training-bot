@@ -174,7 +174,7 @@ function stfu(newUser: Discord.GuildMember) {
 client
 	.on('error', console.error)
 	.on('warn', console.warn)
-	.on('debug', process.env.NODE_ENV !== 'production' ? () => null : console.log)
+	.on('debug', process.env.NODE_ENV !== 'production' ? console.info : () => null)
 	.on('ready', () => {
 		console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	})
