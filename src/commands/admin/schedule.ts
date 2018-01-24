@@ -101,7 +101,7 @@ export class AddScheduleCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id)));
 	}
 	async run(message, args) {
 		const parsedTime = later.parse.text(args.time);
@@ -148,7 +148,7 @@ export class DelScheduleCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id)));
 	}
 	async run(message, args) {
 		const matches = args.id;
@@ -194,7 +194,7 @@ export class GetScheduleCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 	}
 	async run(message, args) {
 		Schedule.find({}, (err, docs) => {

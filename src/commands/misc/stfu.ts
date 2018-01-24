@@ -101,7 +101,7 @@ export class MeatCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
+		return !!message.member &&!!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
 	}
 
 	async run(message, args) {

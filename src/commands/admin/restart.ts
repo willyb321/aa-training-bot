@@ -25,7 +25,7 @@ export class RestartCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
-		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem.id)));
 	}
 	async run(message) {
 

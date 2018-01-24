@@ -33,11 +33,11 @@ export class PurgeCommand extends Commando.Command {
 			]
 		});
 	}
-
+	hasPermission(message) {
+		return client.isOwner(message.author)
+	}
 	async run(message, args) {
-		if (!client.isOwner(message.author)) {
-			return;
-		}
+
 		let limit = args.amount;
 		if (!limit) {
 			return;
