@@ -14,8 +14,6 @@ Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
-const allowedToSTFU: any = ['374118891854495744', '374118893012385792', '381988545088323584', '394325522575785984'];
-
 export function stfu(message: Discord.Message) {
 	if (!message || !message.mentions) {
 		return;
@@ -27,12 +25,12 @@ export function stfu(message: Discord.Message) {
 	if (!user) {
 		return;
 	}
-	if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && user.voiceChannel) {
+	if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voiceChannel) {
 		console.log('Doing it!');
 		stfuInit(user, user);
 		return;
 	}
-	if (!user.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
+	if (!user.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 		message.channel.send(`STFU ${user.toString()}!`);
 		return;
 	}
@@ -59,7 +57,9 @@ export class StfuCommand extends Commando.Command {
 			]
 		});
 	}
-
+	hasPermission(message) {
+		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
+	}
 	async run(message, args) {
 		const user = args.user;
 		if (currentStatus.inVoice) {
@@ -68,12 +68,12 @@ export class StfuCommand extends Commando.Command {
 		if (!user) {
 			return;
 		}
-		if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && user.voiceChannel) {
+		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voiceChannel) {
 			console.log('Doing it!');
 			stfuInit(user, user);
 			return;
 		}
-		if (!user.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
+		if (!user.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			message.channel.send(`STFU ${user.toString()}!`);
 			return;
 		}
@@ -100,6 +100,10 @@ export class MeatCommand extends Commando.Command {
 		});
 	}
 
+	hasPermission(message) {
+		return !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
+	}
+
 	async run(message, args) {
 		if (client.voiceConnections.first()) {
 			return;
@@ -117,13 +121,13 @@ export class MeatCommand extends Commando.Command {
 			console.log('Not STFUing.');
 			return;
 		}
-		if (!newUser.voiceChannel && message.member.roles.find(elem => allowedToSTFU.includes(elem.id))) {
+		if (!newUser.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return;
 		}
 		if (currentStatus.inVoice) {
 			return;
 		}
-		if (message.member.roles.find(elem => allowedToSTFU.includes(elem.id)) && newUser.voiceChannel) {
+		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && newUser.voiceChannel) {
 			console.log('Doing it!');
 			currentStatus.lastStfu = Math.floor(Date.now());
 			currentStatus.inVoice = true;

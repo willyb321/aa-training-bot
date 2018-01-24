@@ -100,11 +100,10 @@ export class AddScheduleCommand extends Commando.Command {
 			]
 		});
 	}
-
+	hasPermission(message) {
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+	}
 	async run(message, args) {
-		if (!message.member.roles.get(config.adminRoleID)) {
-			return;
-		}
 		const parsedTime = later.parse.text(args.time);
 		if (parsedTime.error !== -1) {
 			message.channel.send(`Invalid expression. Position of error (from 0): ${parsedTime.error}`);
@@ -148,11 +147,10 @@ export class DelScheduleCommand extends Commando.Command {
 			]
 		});
 	}
-
+	hasPermission(message) {
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+	}
 	async run(message, args) {
-		if (!message.member.roles.get(config.adminRoleID)) {
-			return;
-		}
 		const matches = args.id;
 		if (matches.length > 1) {
 			for (const i of matches) {
@@ -195,11 +193,10 @@ export class GetScheduleCommand extends Commando.Command {
 			examples: ['sched']
 		});
 	}
-
+	hasPermission(message) {
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+	}
 	async run(message, args) {
-		if (!message.member.roles.get(config.adminRoleID)) {
-			return;
-		}
 		Schedule.find({}, (err, docs) => {
 			if (err) {
 				Raven.captureException(err);

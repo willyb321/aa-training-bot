@@ -24,12 +24,11 @@ export class RestartCommand extends Commando.Command {
 			examples: ['restart']
 		});
 	}
-
+	hasPermission(message) {
+		return !(!message.member || !message.member.roles.find(elem => config.allowedRoles.includes(elem)));
+	}
 	async run(message) {
-		if (!message.member.roles.map(elem => config.allowedRoles.includes(elem))) {
-			console.log('Not restarting');
-			return;
-		}
+
 		console.log('Restarting');
 		message.channel.send(':wave:')
 			.then(() => {
