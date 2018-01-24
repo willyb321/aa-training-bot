@@ -46,16 +46,7 @@ export const currentStatus: IcurrentStatus = {
 	lastStfu: null
 };
 
-export const chunk = (target, size) => {
-	return target.reduce((memo, value, index) => {
-		// Here it comes the only difference
-		if (index % (target.length / size) == 0 && index !== 0) {
-			memo.push([]);
-		}
-		memo[memo.length - 1].push(value);
-		return memo;
-	}, [[]]);
-};
+
 export function noOof(message: Discord.Message) {
 	message.author.createDM()
 		.then(dm => {
@@ -88,7 +79,7 @@ export function isItOof(message: Discord.Message) {
 
 export function botLog(message: string, title: string, event: string, channelId?: string) {
 	const botLogId = '383143845841600513';
-	const channel = client.guilds.get(config.paradigmID).channels.get(channelId || botLogId);
+	const channel = client.channels.get(channelId || botLogId) as Discord.TextChannel;
 	if (channel) {
 		const embed = new Discord.RichEmbed();
 		embed

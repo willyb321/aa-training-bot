@@ -49,8 +49,9 @@ export function addAllAnnouncementsToMemory() {
 		} else {
 			docs.forEach((elem: ISchedule) => {
 				const parsedTime = later.parse.text(elem.timeExpression);
-				const annouce = later.setInterval(() => {announce(elem.message, elem.channelId, elem.everyone);}, parsedTime);
-				announcements[elem._id] = annouce;
+				announcements[elem._id] = later.setInterval(() => {
+					announce(elem.message, elem.channelId, elem.everyone);
+				}, parsedTime);
 			});
 		}
 	});
@@ -117,8 +118,7 @@ export class AddScheduleCommand extends Commando.Command {
 		});
 		scheduleDoc.save()
 			.then( elem => {
-				const annouce = later.setInterval(() => announce(args.message, args.channel.id, args.everyone), parsedTime);
-				announcements[elem._id] = annouce;
+				announcements[elem._id] = later.setInterval(() => announce(args.message, args.channel.id, args.everyone), parsedTime);
 				message.channel.send(`:ok_hand: Done! Id: ${scheduleDoc._id}`);
 
 			})

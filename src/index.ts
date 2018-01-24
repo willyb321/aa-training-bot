@@ -21,7 +21,6 @@ import {tmpdir} from 'os';
 import {moderatePVP, pvpVideoID} from './pvpmod';
 import {existsSync} from 'fs';
 import * as Admin from './commands/admin/schedule';
-import {stfuInterval} from './commands/misc/stfu';
 
 const oneLine = require('common-tags').oneLine;
 
@@ -75,7 +74,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	const now = Math.floor(Date.now());
 	if (!joined && newUser.voiceChannel !== undefined) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
-			console.log(`Not STFUing since ${stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
+			console.log(`Not STFUing since ${config.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
 		}
 		currentStatus.inVoice = true;
