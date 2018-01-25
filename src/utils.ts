@@ -24,7 +24,7 @@ export interface IcurrentStatus {
 	teamsNumber: number;
 	currentInstanced: Discord.User[];
 	currentReady: Discord.User[];
-	teamMessage: Discord.RichEmbed;
+	teamMessage: Discord.MessageEmbed;
 	currentSpams: {};
 	currentDms: {};
 	replies: string[];
@@ -81,7 +81,7 @@ export function botLog(message: string, title: string, event: string, channelId?
 	const botLogId = '383143845841600513';
 	const channel = client.channels.get(channelId || botLogId) as Discord.TextChannel;
 	if (channel) {
-		const embed = new Discord.RichEmbed();
+		const embed = new Discord.MessageEmbed();
 		embed
 			.setTitle(title || 'Ainsley')
 			.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')

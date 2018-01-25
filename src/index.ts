@@ -31,7 +31,7 @@ Raven.config(config.ravenDSN, {
 }).install();
 
 // Create an instance of a Discord client
-export const client = new Commando.Client({
+export const client = new Commando.CommandoClient({
 	owner: config.owners,
 	unknownCommandResponse: false
 });
@@ -144,7 +144,7 @@ function stfu(newUser: Discord.GuildMember) {
 				.catch(err => {
 					Raven.captureException(err);
 				});
-			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
+			const voiceDis = voice.play(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
 				bitrate: 10000,
 				passes: 1
 			});
@@ -215,7 +215,7 @@ client
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
-	client.user.setGame('in moderation')
+	client.user.setActivity('in moderation')
 		.then(() => {
 			// no-op
 		})
@@ -223,6 +223,18 @@ client.on('ready', () => {
 			Raven.captureException(err);
 		});
 	Admin.addAllAnnouncementsToMemory();
+});
+
+client.on('guildMemberAdd', (member: Discord.GuildMember) => {
+	const guestRole = client.guilds.get(config.paradigmID).roles.get('374118887060668417');
+	member.addRole(guestRole)
+		.then(() => {
+			console.log(`Gave ${member.displayName} guest`);
+		})
+		.catch(err => {
+			console.error(err);
+			Raven.captureException(err);
+		})
 });
 
 client.registry

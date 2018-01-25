@@ -74,8 +74,7 @@ export class StfuCommand extends Commando.Command {
 			return;
 		}
 		if (!user.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-			message.channel.send(`STFU ${user.toString()}!`);
-			return;
+			return message.channel.send(`STFU ${user.toString()}!`);
 		}
 	}
 }
@@ -131,7 +130,7 @@ export class MeatCommand extends Commando.Command {
 			console.log('Doing it!');
 			currentStatus.lastStfu = Math.floor(Date.now());
 			currentStatus.inVoice = true;
-			newUser.voiceChannel.join()
+			return newUser.voiceChannel.join()
 				.then(voice => {
 					const voiceDis = voice.playFile(join(__dirname, '..', '..', '..', 'meat.mp3'), {
 						bitrate: 10000,

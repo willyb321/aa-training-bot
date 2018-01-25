@@ -9,8 +9,11 @@
 		"inlineSourceMap": true,
 		"sourceRoot": "src/",
 		"outDir": "dist/",
-		"lib": ["es2016", "dom"]
-	},
+    "lib": ["es2016", "dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
 	"include": ["src/**/*"],
 	"exclude": [
 		"node_modules"

@@ -30,7 +30,7 @@ export class RestartCommand extends Commando.Command {
 	async run(message) {
 
 		console.log('Restarting');
-		message.channel.send(':wave:')
+		return message.channel.send(':wave:')
 			.then(() => {
 				client.destroy()
 					.then(() => {

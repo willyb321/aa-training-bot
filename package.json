@@ -20,8 +20,8 @@
     "bufferutil": "^3.0.3",
     "common-tags": "^1.7.2",
     "compromise": "^11.2.1",
-    "discord.js": "^11.2.1",
-    "discord.js-commando": "^0.9.0",
+    "discord.js": "github:discordjs/discord.js",
+    "discord.js-commando": "github:discordjs/commando",
     "erlpack": "github:hammerandchisel/erlpack",
     "ffmpeg-binaries": "^3.2.2-3",
     "later": "github:willyb321/later",
@@ -41,10 +41,12 @@
     "uws": "^9.14.0"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.4.0",
     "@types/later": "^1.2.4",
     "@types/leven": "^2.1.1",
     "@types/lodash": "^4.14.91",
     "@types/mongoose": "^4.7.32",
+    "@types/mongoose-auto-increment": "^5.0.30",
     "@types/nedb": "^1.8.5",
     "@types/node": "^8.5.5",
     "@types/npm": "^2.0.29",

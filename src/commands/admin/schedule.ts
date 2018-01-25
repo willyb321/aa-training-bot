@@ -116,10 +116,10 @@ export class AddScheduleCommand extends Commando.Command {
 			channelId: args.channel.id,
 			everyone: args.everyone
 		});
-		scheduleDoc.save()
+		return scheduleDoc.save()
 			.then( elem => {
 				announcements[elem._id] = later.setInterval(() => announce(args.message, args.channel.id, args.everyone), parsedTime);
-				message.channel.send(`:ok_hand: Done! Id: ${scheduleDoc._id}`);
+				return message.channel.send(`:ok_hand: Done! Id: ${scheduleDoc._id}`);
 
 			})
 			.catch(err => {
@@ -168,13 +168,13 @@ export class DelScheduleCommand extends Commando.Command {
 					});
 			}
 		} else {
-			Schedule.findOneAndRemove({_id: matches[0]})
+			return Schedule.findOneAndRemove({_id: matches[0]})
 				.then(() => {
 					if (announcements[matches[0]] && announcements[matches[0]].clear) {
 						announcements[matches[0]].clear();
 					}
 					announcements.splice(matches[0], 1);
-					message.channel.send(`:ok_hand: Done! Deleted id #${matches[0]}`);
+					return message.channel.send(`:ok_hand: Done! Deleted id #${matches[0]}`);
 				})
 				.catch(err => {
 					Raven.captureException(err);
@@ -198,11 +198,9 @@ export class GetScheduleCommand extends Commando.Command {
 		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 	}
 	async run(message, args) {
-		Schedule.find({}, (err, docs) => {
-			if (err) {
-				Raven.captureException(err);
-			} else {
-				const embed = new Discord.RichEmbed();
+		return Schedule.find({})
+			.then(docs => {
+				const embed = new Discord.MessageEmbed();
 				embed
 					.setTitle('Ainsley Schedule')
 					.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
@@ -218,7 +216,10 @@ export class GetScheduleCommand extends Commando.Command {
 				}
 				embed.addField('Help with schedules', 'See https://willb.info/s/rJ7u4Xy4z');
 				return message.channel.send({embed});
-			}
-		});
+		})
+			.catch(err => {
+				console.error(err);
+				Raven.captureException(err);
+			})
 	}
 }
