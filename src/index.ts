@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
 import * as AudioSprite from 'audiosprite-pkg';
-import {botLog, config, currentStatus, isItOof, noOof} from './utils';
+import {botLog, checkCurrentPolls, config, currentStatus, isItOof, noOof} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
@@ -223,6 +223,7 @@ client.on('ready', () => {
 			Raven.captureException(err);
 		});
 	Admin.addAllAnnouncementsToMemory();
+	checkCurrentPolls()
 });
 
 client.on('guildMemberAdd', (member: Discord.GuildMember) => {

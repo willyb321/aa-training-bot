@@ -9,6 +9,8 @@ import {client} from './index';
 import * as Raven from 'raven';
 import * as _ from 'lodash';
 import {config} from './config';
+import * as mongoose from "mongoose";
+import * as autoIncrement from "mongoose-auto-increment";
 export {config} from './config';
 
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
@@ -92,4 +94,71 @@ export function botLog(message: string, title: string, event: string, channelId?
 
 		channel.send({embed});
 	}
+}
+mongoose.connect(config.mongoURL);
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
+	console.log('Mongo connected!');
+});
+autoIncrement.initialize(db);
+
+const pollSchema = new mongoose.Schema({
+	msgID: String,
+	timeToFinish: Date
+});
+
+export interface IPoll extends mongoose.Document {
+	msgID: string;
+	timeToFinish: Date;
+}
+
+export interface IPollModel extends mongoose.Model<IPoll> {
+
+}
+export const Poll: IPollModel = mongoose.model('Poll', pollSchema);
+export const timeTill = (date: Date): number => date.getMilliseconds() - new Date().getMilliseconds();
+
+export function checkCurrentPolls() {
+	Poll.find({})
+		.then(docs => {
+			if (docs) {
+				docs.forEach(elem => {
+					console.log(elem);
+					setTimeout(async () => {
+						const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
+						if (!channel) {
+							return;
+						}
+						const msg = await channel.messages.fetch(elem.msgID);
+						if (!msg) {
+							return;
+						}
+						const reactions = msg.reactions;
+						let realReactions = reactions.filterArray(elem => elem.emoji.toString() === '👍' || elem.emoji.toString() === '👎' || elem.emoji.toString() === '🇵');
+						if (!realReactions) {
+							return;
+						}
+						let sum = 0;
+						realReactions.forEach(elem => sum = sum + elem.count - 1);
+						let toSend = `<@&${config.councilID}>\nPoll Results (${sum} voted):\n`;
+						if (sum < 9) {
+
+						}
+						realReactions.forEach(elem => {
+							toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
+						});
+						return msg.channel.send(toSend)
+							.then(async () => {
+								try {
+									await elem.remove()
+								} catch (err) {
+									console.error(err);
+									Raven.captureException(err);
+								}
+							})
+					}, timeTill(elem.timeToFinish));
+				})
+			}
+		});
 }
