@@ -20,8 +20,8 @@ export class PollCommand extends Commando.Command {
 			group: 'admin',
 			memberName: 'poll',
 			description: 'Make a poll in #council-polls.',
-			details: 'Purge messages.',
-			examples: ['purge 5'],
+			details: 'Make a poll in #council-polls.',
+			examples: ['poll'],
 
 			args: [
 				{
