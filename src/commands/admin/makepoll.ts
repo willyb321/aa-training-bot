@@ -69,6 +69,13 @@ export class PollCommand extends Commando.Command {
 					prompt: 'Poll words?',
 					type: 'string',
 					infinite: true
+				},
+				{
+					key: 'days',
+					prompt: 'Poll length (in days)?',
+					type: 'integer',
+					default: 3,
+					min: 1
 				}
 			]
 		});
@@ -87,7 +94,7 @@ export class PollCommand extends Commando.Command {
 					await poll.react('👍');
 					await poll.react('👎');
 					await poll.react('🇵');
-					const pollDoc = new Poll({msgID: poll.id, timeToFinish: addDays(new Date(), 3)});
+					const pollDoc = new Poll({msgID: poll.id, timeToFinish: addDays(new Date(), args.days)});
 					await pollDoc.save();
 					insertPollToMemory(pollDoc);
 				} catch (err) {
