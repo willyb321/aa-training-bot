@@ -68,7 +68,6 @@ export class PollCommand extends Commando.Command {
 					key: 'days',
 					prompt: 'Poll length (in days)?',
 					type: 'integer',
-					default: 3,
 					min: 1
 				},
 				{
