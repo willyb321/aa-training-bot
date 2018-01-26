@@ -65,17 +65,17 @@ export class PollCommand extends Commando.Command {
 
 			args: [
 				{
-					key: 'msg',
-					prompt: 'Poll words?',
-					type: 'string',
-					infinite: true
-				},
-				{
 					key: 'days',
 					prompt: 'Poll length (in days)?',
 					type: 'integer',
 					default: 3,
 					min: 1
+				},
+				{
+					key: 'msg',
+					prompt: 'Poll words?',
+					type: 'string',
+					infinite: true
 				}
 			]
 		});
