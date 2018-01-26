@@ -228,7 +228,8 @@ client.on('ready', () => {
 
 client.on('guildMemberAdd', (member: Discord.GuildMember) => {
 	const guestRole = client.guilds.get(config.paradigmID).roles.get('374118887060668417');
-	member.addRole(guestRole)
+	const editData = {roles: ['374118887060668417']};
+	member.edit(editData)
 		.then(() => {
 			console.log(`Gave ${member.displayName} guest`);
 		})
