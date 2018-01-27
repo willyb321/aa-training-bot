@@ -141,7 +141,7 @@ export function checkCurrentPolls() {
 						}
 						let sum = 0;
 						realReactions.forEach(elem => sum = sum + elem.count - 1);
-						let toSend = `<@&${config.councilID}>\nPoll Results (${sum} voted):\n`;
+						let toSend = `Poll Results (${sum} voted):\n`;
 						if (sum < 9) {
 
 						}

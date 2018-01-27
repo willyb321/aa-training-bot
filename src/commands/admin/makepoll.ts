@@ -34,7 +34,7 @@ function insertPollToMemory(elem) {
 		}
 		let sum = 0;
 		realReactions.forEach(elem => sum = sum + elem.count - 1);
-		let toSend = `<@&${config.councilID}>\nPoll Results (${sum} voted):\n`;
+		let toSend = `Poll Results (${sum} voted):\n`;
 		if (sum < 9) {
 
 		}
@@ -87,13 +87,15 @@ export class PollCommand extends Commando.Command {
 		if (!channel) {
 			return message.channel.send('Had an error. Contact Willy');
 		}
-		return channel.send(`<@&${config.councilID}>\nNew Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
+		return channel.send(`New Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
 			.then(async (poll: Discord.Message) => {
 				try {
 					await poll.react('👍');
 					await poll.react('👎');
 					await poll.react('🇵');
-					const pollDoc = new Poll({msgID: poll.id, timeToFinish: addDays(new Date(), args.days)});
+					const date = new Date();
+					date.setDate(date.getDate() + args.days);
+					const pollDoc = new Poll({msgID: poll.id, timeToFinish: date});
 					await pollDoc.save();
 					insertPollToMemory(pollDoc);
 				} catch (err) {
