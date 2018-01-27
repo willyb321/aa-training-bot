@@ -15,42 +15,47 @@ Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
-const addDays = (date, days) => date.setDate(date.getDate() + days);
+const addDays = (date, days) => date.setTime(date.getTime() + days * 86400000);
 
 function insertPollToMemory(elem) {
-	setTimeout(async () => {
-		const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
-		if (!channel) {
-			return;
-		}
-		const msg = await channel.messages.fetch(elem.msgID);
-		if (!msg) {
-			return;
-		}
-		const reactions = msg.reactions;
-		let realReactions = reactions.filterArray(elem => elem.emoji.toString() === '👍' || elem.emoji.toString() === '👎' || elem.emoji.toString() === '🇵');
-		if (!realReactions) {
-			return;
-		}
-		let sum = 0;
-		realReactions.forEach(elem => sum = sum + elem.count - 1);
-		let toSend = `Poll Results (${sum} voted):\n`;
-		if (sum < 9) {
-
-		}
-		realReactions.forEach(elem => {
-			toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
-		});
-		return msg.channel.send(toSend)
-			.then(async () => {
-				try {
-					await elem.remove()
-				} catch (err) {
-					console.error(err);
-					Raven.captureException(err);
-				}
-			})
+	console.log(timeTill(elem.timeToFinish));
+	setTimeout(() => {
+		setup(elem);
 	}, timeTill(elem.timeToFinish));
+}
+
+async function setup(elem) {
+	const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
+	if (!channel) {
+		return;
+	}
+	const msg = await channel.messages.fetch(elem.msgID);
+	if (!msg) {
+		return;
+	}
+	const reactions = msg.reactions;
+	let realReactions = reactions.filterArray(elem => elem.emoji.toString() === '👍' || elem.emoji.toString() === '👎' || elem.emoji.toString() === '🇵');
+	if (!realReactions) {
+		return;
+	}
+	let sum = 0;
+	realReactions.forEach(elem => sum = sum + elem.count - 1);
+	let toSend = `Poll Results (${sum} voted):\n`;
+	if (sum < 9) {
+
+	}
+	realReactions.forEach(elem => {
+		toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
+	});
+	return msg.channel.send(toSend)
+		.then(async () => {
+			try {
+				await elem.remove()
+			} catch (err) {
+				console.error(err);
+				Raven.captureException(err);
+			}
+		})
 }
 
 export class PollCommand extends Commando.Command {
@@ -93,8 +98,9 @@ export class PollCommand extends Commando.Command {
 					await poll.react('👍');
 					await poll.react('👎');
 					await poll.react('🇵');
-					const date = new Date();
-					date.setDate(date.getDate() + args.days);
+					let date = new Date();
+					date = new Date(date.setTime(date.getTime() + args.days * 86400000));
+					console.log(date);
 					const pollDoc = new Poll({msgID: poll.id, timeToFinish: date});
 					await pollDoc.save();
 					insertPollToMemory(pollDoc);

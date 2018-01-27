@@ -117,7 +117,7 @@ export interface IPollModel extends mongoose.Model<IPoll> {
 
 }
 export const Poll: IPollModel = mongoose.model('Poll', pollSchema);
-export const timeTill = (date: Date): number => date.getMilliseconds() - new Date().getMilliseconds();
+export const timeTill = (date: Date): number => date.valueOf() - new Date().valueOf();
 
 export function checkCurrentPolls() {
 	Poll.find({})
@@ -125,40 +125,46 @@ export function checkCurrentPolls() {
 			if (docs) {
 				docs.forEach(elem => {
 					console.log(elem);
-					setTimeout(async () => {
-						const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
-						if (!channel) {
-							return;
-						}
-						const msg = await channel.messages.fetch(elem.msgID);
-						if (!msg) {
-							return;
-						}
-						const reactions = msg.reactions;
-						let realReactions = reactions.filterArray(elem => elem.emoji.toString() === '👍' || elem.emoji.toString() === '👎' || elem.emoji.toString() === '🇵');
-						if (!realReactions) {
-							return;
-						}
-						let sum = 0;
-						realReactions.forEach(elem => sum = sum + elem.count - 1);
-						let toSend = `Poll Results (${sum} voted):\n`;
-						if (sum < 9) {
-
-						}
-						realReactions.forEach(elem => {
-							toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
-						});
-						return msg.channel.send(toSend)
-							.then(async () => {
-								try {
-									await elem.remove()
-								} catch (err) {
-									console.error(err);
-									Raven.captureException(err);
-								}
-							})
+					console.log(elem.timeToFinish);
+					console.log(`timeTill(elem.timeToFinish): ${timeTill(elem.timeToFinish)}`);
+					setTimeout(() => {
+						setup(elem);
 					}, timeTill(elem.timeToFinish));
 				})
 			}
 		});
+}
+
+async function setup(elem) {
+	const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
+	if (!channel) {
+		return;
+	}
+	const msg = await channel.messages.fetch(elem.msgID);
+	if (!msg) {
+		return;
+	}
+	const reactions = msg.reactions;
+	let realReactions = reactions.filterArray(elem => elem.emoji.toString() === '👍' || elem.emoji.toString() === '👎' || elem.emoji.toString() === '🇵');
+	if (!realReactions) {
+		return;
+	}
+	let sum = 0;
+	realReactions.forEach(elem => sum = sum + elem.count - 1);
+	let toSend = `Poll Results (${sum} voted):\n`;
+	if (sum < 9) {
+
+	}
+	realReactions.forEach(elem => {
+		toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
+	});
+	return msg.channel.send(toSend)
+		.then(async () => {
+			try {
+				await elem.remove()
+			} catch (err) {
+				console.error(err);
+				Raven.captureException(err);
+			}
+		})
 }
