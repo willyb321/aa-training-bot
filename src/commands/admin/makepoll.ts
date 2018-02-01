@@ -40,10 +40,7 @@ async function setup(elem) {
 	}
 	let sum = 0;
 	realReactions.forEach(elem => sum = sum + elem.count - 1);
-	let toSend = `Poll Results (${sum} voted):\n`;
-	if (sum < 9) {
-
-	}
+	let toSend = `Poll Results for ID ${elem.id} (${sum} voted):\n`;
 	realReactions.forEach(elem => {
 		toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
 	});
@@ -89,10 +86,22 @@ export class PollCommand extends Commando.Command {
 	}
 	async run(message, args) {
 		const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
+		const ALPHABET = args.msg.join('');
+
+		const ID_LENGTH = 4;
+
+		const generate = () => {
+			let rtn = '';
+			for (let i = 0; i < ID_LENGTH; i++) {
+				rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+			}
+			return rtn;
+		};
+		const id = generate();
 		if (!channel) {
 			return message.channel.send('Had an error. Contact Willy');
 		}
-		return channel.send(`New Poll from ${message.author.toString()}:\n${args.msg.join('\n')}`)
+		return channel.send(`New Poll from ${message.author.toString()} (id: ${id}):\n${args.msg.join(' ')}`)
 			.then(async (poll: Discord.Message) => {
 				try {
 					await poll.react('👍');
@@ -101,7 +110,7 @@ export class PollCommand extends Commando.Command {
 					let date = new Date();
 					date = new Date(date.setTime(date.getTime() + args.days * 86400000));
 					console.log(date);
-					const pollDoc = new Poll({msgID: poll.id, timeToFinish: date});
+					const pollDoc = new Poll({msgID: poll.id, timeToFinish: date, id});
 					await pollDoc.save();
 					insertPollToMemory(pollDoc);
 				} catch (err) {

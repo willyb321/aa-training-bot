@@ -105,12 +105,14 @@ autoIncrement.initialize(db);
 
 const pollSchema = new mongoose.Schema({
 	msgID: String,
-	timeToFinish: Date
+	timeToFinish: Date,
+	id: String
 });
 
 export interface IPoll extends mongoose.Document {
 	msgID: string;
 	timeToFinish: Date;
+	id: string;
 }
 
 export interface IPollModel extends mongoose.Model<IPoll> {
@@ -151,7 +153,7 @@ async function setup(elem) {
 	}
 	let sum = 0;
 	realReactions.forEach(elem => sum = sum + elem.count - 1);
-	let toSend = `Poll Results (${sum} voted):\n`;
+	let toSend = `Poll Results for ID ${elem.id} (${sum} voted):\n`;
 	if (sum < 9) {
 
 	}
