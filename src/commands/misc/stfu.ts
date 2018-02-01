@@ -132,7 +132,7 @@ export class MeatCommand extends Commando.Command {
 			currentStatus.inVoice = true;
 			return newUser.voiceChannel.join()
 				.then(voice => {
-					const voiceDis = voice.playFile(join(__dirname, '..', '..', '..', 'meat.mp3'), {
+					const voiceDis = voice.play(join(__dirname, '..', '..', '..', 'meat.mp3'), {
 						bitrate: 10000,
 						passes: 1
 					});
