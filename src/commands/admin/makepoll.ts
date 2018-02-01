@@ -101,14 +101,14 @@ export class PollCommand extends Commando.Command {
 		if (!channel) {
 			return message.channel.send('Had an error. Contact Willy');
 		}
-		return channel.send(`New Poll from ${message.author.toString()} (id: ${id}):\n${args.msg.join(' ')}`)
+		let date = new Date();
+		date = new Date(date.setTime(date.getTime() + args.days * 86400000));
+		return channel.send(`New Poll from ${message.author.toString()} (id: ${id}):\n${args.msg.join(' ')}\n\nPoll ends on: ${date.toISOString()}`)
 			.then(async (poll: Discord.Message) => {
 				try {
 					await poll.react('👍');
 					await poll.react('👎');
 					await poll.react('🇵');
-					let date = new Date();
-					date = new Date(date.setTime(date.getTime() + args.days * 86400000));
 					console.log(date);
 					const pollDoc = new Poll({msgID: poll.id, timeToFinish: date, id});
 					await pollDoc.save();
