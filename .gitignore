@@ -136,4 +136,3 @@ ecosystem.config.js
 config\.json
 
 docs/
-src/config.ts
