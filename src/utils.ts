@@ -14,9 +14,6 @@ import * as autoIncrement from "mongoose-auto-increment";
 export {config} from './config';
 
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
-const guild = '374103486154932234';
-const mutedRoleId = '383059187942293504';
-const botLogId = '383143845841600513';
 const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf', '()()|=', 'οοf', 'Ооf', 'ооf'];
 export interface IcurrentStatus {
 	session: boolean;

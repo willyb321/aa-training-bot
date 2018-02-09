@@ -47,7 +47,10 @@ export class StfuCommand extends Commando.Command {
 			description: 'Tell a user to STFU.',
 			details: 'Tell a user to STFU.',
 			examples: ['stfu @Scorpius#2025'],
-
+			throttling: {
+				usages: 1,
+				duration: 90
+			},
 			args: [
 				{
 					key: 'user',
@@ -107,7 +110,7 @@ export class MeatCommand extends Commando.Command {
 		if (client.voiceConnections.first()) {
 			return;
 		}
-		if (!message || !message.mentions) {
+		if (!message) {
 			return;
 		}
 		const newUser = args.user;

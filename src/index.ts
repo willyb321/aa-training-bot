@@ -112,13 +112,13 @@ export function stfuTrue(newUser: Discord.GuildMember) {
 				const msg = `Shut the fuck up ${newUser.user.username}`;
 				const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
 				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
-				const as = new AudioSprite();
-				as.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), err => {
+				const outputfile = new AudioSprite();
+				outputfile.inputFile(join(tmpdir(), `stfu-${newUser.user.username}.wav`), err => {
 					if (err) {
 						Raven.captureException(err);
 						console.error(err);
 					}
-					as.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, err => {
+					outputfile.outputFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {format: 'mp3'}, err => {
 						if (err) {
 							Raven.captureException(err);
 							console.error(err);
