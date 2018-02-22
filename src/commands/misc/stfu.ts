@@ -61,6 +61,9 @@ export class StfuCommand extends Commando.Command {
 		});
 	}
 	hasPermission(message) {
+		if (!!message.member.roles.find(elem => config.allowedToSTFU.includes(elem.id))) {
+			return true
+		}
 		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
 	}
 	async run(message, args) {
@@ -103,7 +106,10 @@ export class MeatCommand extends Commando.Command {
 	}
 
 	hasPermission(message) {
-		return !!message.member &&!!message.member.roles.find(elem => config.allowedRoles.includes(elem.id))
+		if (!!message.member.roles.find(elem => config.allowedToSTFU.includes(elem.id))) {
+			return true;
+		}
+		return !!message.member && !!message.member.roles.find(elem => config.allowedRoles.includes(elem.id));
 	}
 
 	async run(message, args) {
