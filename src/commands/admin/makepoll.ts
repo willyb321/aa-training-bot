@@ -86,7 +86,7 @@ export class PollCommand extends Commando.Command {
 	}
 	async run(message, args) {
 		const channel = client.channels.get(config.pollChannelID) as Discord.TextChannel;
-		const ALPHABET = args.msg.join('').replace(' ', '');
+		const ALPHABET = args.msg.join('').replace(' ', '').replace(/[a-zA-Z0-9]{2,}/, '');
 
 		const ID_LENGTH = 4;
 

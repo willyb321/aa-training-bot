@@ -46,7 +46,7 @@ export class ReportCommand extends Commando.Command {
 		if (!modreportChannel) {
 			return message.channel.send('I hit a bug. Contact willyb.')
 		}
-		return botLog(`\`\`\`${args.message.join('\n')}\`\`\``, `Moderator Report from ${message.author.tag}`, 'Moderator Report', config.modChannel)
+		return botLog(`\`\`\`${args.message.join(' ')}\`\`\``, `Moderator Report from ${message.author.tag}`, 'Moderator Report', config.modChannel)
 
 	}
 }
