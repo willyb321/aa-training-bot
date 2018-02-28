@@ -46,7 +46,13 @@ export class GameCommand extends Commando.Command {
 		let newRoles = currentRoles;
 		const role = message.guild.roles.find(elem => elem.name.toLowerCase() === args.tag.toLowerCase());
 		if (!role) {
-			return message.reply(`Can't find role ${args.tag}`);
+			const validRoles = [];
+			message.guild.roles.forEach(elem => {
+				if (elem.name.startsWith('game-')) {
+					validRoles.push(elem.name);
+				}
+			});
+			return message.reply(`Can't find role ${args.tag}\nValid Choices:\n${validRoles.join(', ')}`);
 		}
 		if (!role.name.toLowerCase().startsWith('game-')) {
 			return message.reply('Cheeky.')
