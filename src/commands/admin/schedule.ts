@@ -205,7 +205,7 @@ export class GetScheduleCommand extends Commando.Command {
 					.setTitle('Ainsley Schedule')
 					.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
 					.setDescription('Announcement schedule: ')
-					.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
+					.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733.png')
 					.setTimestamp();
 				docs.forEach((elem: any) => {
 					const next: any = later.schedule(later.parse.text(elem.timeExpression)).next(1, new Date());

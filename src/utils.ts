@@ -83,9 +83,9 @@ export function botLog(message: string, title: string, event: string, channelId?
 		const embed = new Discord.MessageEmbed();
 		embed
 			.setTitle(title || 'Ainsley')
-			.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
+			.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7.png')
 			.setDescription(message)
-			.setFooter('By Willyb321', 'https://willb.info/i/22f73495510de53cb95cba9615549bc9')
+			.setFooter('By Willyb321', 'https://willb.info/i/2167372b54bbaf90900a8205a28f3733.png')
 			.setTimestamp()
 			.addField('Event', event);
 
