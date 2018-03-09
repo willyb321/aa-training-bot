@@ -50,5 +50,6 @@ export class PurgeCommand extends Commando.Command {
 			.catch(err => {
 				Raven.captureException(err);
 			});
+		return null;
 	}
 }
