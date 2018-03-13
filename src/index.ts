@@ -160,7 +160,7 @@ function stfu(newUser: Discord.GuildMember) {
 				}, 2000);
 			});
 			voiceDis.on('speaking', () => {
-				console.log('Speaking');
+
 			});
 			voiceDis.on('error', err => {
 				Raven.captureException(err);

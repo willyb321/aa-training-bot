@@ -156,7 +156,6 @@ export class MeatCommand extends Commando.Command {
 						}, 2000);
 					});
 					voiceDis.on('speaking', () => {
-						console.log('Speaking');
 					});
 					voiceDis.on('error', err => {
 						Raven.captureException(err);
