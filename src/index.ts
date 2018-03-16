@@ -22,6 +22,8 @@ import {moderatePVP, pvpVideoID} from './pvpmod';
 import {existsSync} from 'fs';
 import * as Admin from './commands/admin/schedule';
 
+import * as sqlite from "sqlite";
+
 const oneLine = require('common-tags').oneLine;
 
 meSpeak.loadVoice(require('mespeak/voices/en/en-us.json'));
@@ -270,6 +272,11 @@ client.on('message', (message: Discord.Message) => {
 		return noOof(message);
 	}
 });
+client.setProvider(
+	sqlite.open(join(__dirname, '..', 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
+).catch(console.error);
+
+
 // Log our bot in
 client.login(token)
 	.then(() => {
