@@ -31,14 +31,17 @@ export function setAllNicksOnServer(changeBack?: boolean) {
 		mentionable: true
 	};
 	let role;
-	guild.roles.create({data: roleAddDate, reason: 'JAMFOOLS'})
-		.then(newrole => {
-			role = newrole;
-		})
-		.catch(err => {
-			console.error(err);
-			Raven.captureException(err);
-		});
+	role = guild.roles.find('name', 'Not Jamfooled');
+	if (!role) {
+		guild.roles.create({data: roleAddDate, reason: 'JAMFOOLS'})
+			.then(newrole => {
+				role = newrole;
+			})
+			.catch(err => {
+				console.error(err);
+				Raven.captureException(err);
+			});
+	}
 
 	guild.members.forEach(async member => {
 		try {
@@ -51,13 +54,15 @@ export function setAllNicksOnServer(changeBack?: boolean) {
 				}
 			}
 		} catch (err) {
-			console.error(err);
-			Raven.captureException(err);
+			if (err.message === 'Privilege is too low...') {
+				await member.roles.add(role)
+			} else {
+				console.error(err);
+				Raven.captureException(err);
+			}
 		}
 	});
 }
-
-client.on('guildMemberUpdate', onTryToChangeBack);
 
 export async function onTryToChangeBack(oldMember: Discord.GuildMember, newMember: Discord.GuildMember) {
 	if (oldMember.nickname === newMember.nickname || newMember.nickname === 'WILLY B JAM FOOLED?') {
