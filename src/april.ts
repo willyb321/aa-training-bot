@@ -64,10 +64,10 @@ export async function onTryToChangeBack(oldMember: Discord.GuildMember, newMembe
 	if (oldMember.nickname === newMember.nickname || newMember.nickname === 'WILLY B JAM FOOLED?') {
 		return;
 	}
-	const name = nameData.find(elem => elem.id === newMember.id);
-	if (name && name.name === newMember.nickname) {
-		return;
-	}
+	// const name = nameData.find(elem => elem.id === newMember.id);
+	// if (name && name.name === newMember.nickname) {
+	// 	return;
+	// }
 	try {
 		await newMember.setNickname('WILLY B JAM FOOLED?');
 	} catch (err) {
