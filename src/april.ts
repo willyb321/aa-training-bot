@@ -12,10 +12,6 @@ const nameData = require(join(__dirname, '..', 'nicknames.json'));
 const startDate = new Date('2018-04-01');
 const endDate = new Date('2018-04-02');
 
-const start = scheduleJob(startDate, () => {
-	console.log('WILLY B JAM FOOLED??');
-	setAllNicksOnServer();
-});
 const job = scheduleJob(endDate, () => {
 	console.log('WILLY B JAM FOOLED??');
 	setAllNicksOnServer(true);
