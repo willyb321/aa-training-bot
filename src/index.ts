@@ -23,7 +23,6 @@ import {existsSync} from 'fs';
 import * as Admin from './commands/admin/schedule';
 
 import * as sqlite from "sqlite";
-import {onTryToChangeBack, setAllNicksOnServer} from "./april";
 
 const oneLine = require('common-tags').oneLine;
 
@@ -219,10 +218,6 @@ client
 // from Discord _after_ ready is emitted
 client.on('ready', () => {
 	console.log('I am ready!');
-	setTimeout(() => {
-		setAllNicksOnServer();
-	}, 5000);
-	client.on('guildMemberUpdate', onTryToChangeBack);
 	client.user.setActivity('in moderation')
 		.then(() => {
 			// no-op
