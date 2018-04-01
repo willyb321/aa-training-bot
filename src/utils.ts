@@ -28,6 +28,7 @@ export interface IcurrentStatus {
 	currentDms: {};
 	replies: string[];
 	inVoice: boolean;
+	polls: Map<string, any>;
 }
 
 export const currentStatus: IcurrentStatus = {
@@ -42,7 +43,8 @@ export const currentStatus: IcurrentStatus = {
 	currentDms: {},
 	replies,
 	inVoice: false,
-	lastStfu: null
+	lastStfu: null,
+	polls: new Map()
 };
 
 
@@ -126,9 +128,13 @@ export function checkCurrentPolls() {
 					console.log(elem);
 					console.log(elem.timeToFinish);
 					console.log(`timeTill(elem.timeToFinish): ${timeTill(elem.timeToFinish)}`);
-					setTimeout(() => {
+					if (currentStatus.polls.has(elem.msgID)) {
+						return;
+					}
+					let timeout = setTimeout(() => {
 						setup(elem);
 					}, timeTill(elem.timeToFinish));
+					currentStatus.polls.set(elem.msgID, timeout);
 				})
 			}
 		});

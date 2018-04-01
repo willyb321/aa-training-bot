@@ -5,7 +5,7 @@
  * ignore
  */
 import * as Raven from 'raven';
-import {config, Poll, timeTill} from '../../utils';
+import {config, currentStatus, Poll, timeTill} from '../../utils';
 import * as Commando from 'discord.js-commando';
 import * as Discord from 'discord.js';
 import {client} from '../../index';
@@ -19,9 +19,13 @@ const addDays = (date, days) => date.setTime(date.getTime() + days * 86400000);
 
 function insertPollToMemory(elem) {
 	console.log(timeTill(elem.timeToFinish));
-	setTimeout(() => {
+	if (currentStatus.polls.has(elem.msgID)) {
+		return;
+	}
+	let timeout = setTimeout(() => {
 		setup(elem);
 	}, timeTill(elem.timeToFinish));
+	currentStatus.polls.set(elem.msgID, timeout);
 }
 
 async function setup(elem) {
@@ -39,10 +43,10 @@ async function setup(elem) {
 		return;
 	}
 	let sum = 0;
-	realReactions.forEach(elem => sum = sum + elem.count - 1);
-	let toSend = `Poll Results for ID ${elem.id} (${sum} voted):\n`;
+	realReactions.forEach(elem => sum += elem.count - 1);
+	let toSend = `Poll Results for ID \`${elem.id}\` (${sum} voted):\n`;
 	realReactions.forEach(elem => {
-		toSend += `${elem.emoji.toString()} - ${elem.count -1}\n`;
+		toSend += `${elem.emoji.toString()} - \`${elem.count}\`\n`;
 	});
 	return msg.channel.send(toSend)
 		.then(async () => {
@@ -76,8 +80,7 @@ export class PollCommand extends Commando.Command {
 				{
 					key: 'msg',
 					prompt: 'Poll words?',
-					type: 'string',
-					infinite: true
+					type: 'string'
 				}
 			]
 		});
@@ -104,7 +107,7 @@ export class PollCommand extends Commando.Command {
 		}
 		let date = new Date();
 		date = new Date(date.setTime(date.getTime() + args.days * 86400000));
-		return channel.send(`New Poll from ${message.author.toString()} (id: ${id}):\n${args.msg.join(' ')}\n\nPoll ends on: ${date.toISOString()}`)
+		return channel.send(`New Poll from ${message.author.toString()} (id: \`${id}\`):\n${args.msg.join(' ')}\n\nPoll ends on: ${date.toISOString()}`)
 			.then(async (poll: Discord.Message) => {
 				try {
 					await poll.react('👍');
