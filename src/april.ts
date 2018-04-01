@@ -9,13 +9,7 @@ Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 const nameData = require(join(__dirname, '..', 'nicknames.json'));
-const startDate = new Date('2018-04-01');
-const endDate = new Date('2018-04-02');
 
-const job = scheduleJob(endDate, () => {
-	console.log('WILLY B JAM FOOLED??');
-	setAllNicksOnServer(true);
-});
 export function setAllNicksOnServer(changeBack?: boolean) {
 	const guild = client.guilds.get(config.paradigmID) as Discord.Guild;
 	if (!guild || !guild.available) {
@@ -28,7 +22,7 @@ export function setAllNicksOnServer(changeBack?: boolean) {
 	};
 	let role;
 	role = guild.roles.find('name', 'Not Jamfooled');
-	if (!role) {
+	if (!role && !changeBack) {
 		guild.roles.create({data: roleAddDate, reason: 'JAMFOOLS'})
 			.then(newrole => {
 				role = newrole;

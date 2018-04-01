@@ -220,9 +220,8 @@ client
 client.on('ready', () => {
 	console.log('I am ready!');
 	setTimeout(() => {
-		setAllNicksOnServer();
+		setAllNicksOnServer(true);
 	}, 5000);
-	client.on('guildMemberUpdate', onTryToChangeBack);
 	client.user.setActivity('in moderation')
 		.then(() => {
 			// no-op
