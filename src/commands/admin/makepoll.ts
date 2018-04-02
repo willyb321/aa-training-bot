@@ -80,7 +80,8 @@ export class PollCommand extends Commando.Command {
 				{
 					key: 'msg',
 					prompt: 'Poll words?',
-					type: 'string'
+					type: 'string',
+					infinite: true
 				}
 			]
 		});
