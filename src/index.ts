@@ -251,6 +251,7 @@ client.registry
 
 // Create an event listener for messages
 client.on('message', (message: Discord.Message) => {
+	console.log(`${message.author.tag}: ${message.cleanContent.toString()}`);
 	if (message.author.id === client.user.id) {
 		return;
 	}

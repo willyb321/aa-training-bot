@@ -32,24 +32,24 @@ export class GameCommand extends Commando.Command {
 				{
 					key: 'tag',
 					prompt: 'What game tag to add / remove?',
-					type: 'string',
-					validate: val => val.startsWith('game-')
+					type: 'string'
 				}
 			]
 		});
 	}
+
 	async run(message, args) {
 		if (!message || !message.member || !message.guild) {
 			return
 		}
 		const currentRoles = message.member.roles;
 		let newRoles = currentRoles;
-		const role = message.guild.roles.find(elem => elem.name.toLowerCase() === args.tag.toLowerCase());
+		const role = message.guild.roles.find(elem => elem.name.toLowerCase().replace('game-', '') === args.tag.toLowerCase().replace('game-', ''));
 		if (!role) {
 			const validRoles = [];
 			message.guild.roles.forEach(elem => {
 				if (elem.name.startsWith('game-')) {
-					validRoles.push(elem.name);
+					validRoles.push(elem.name.replace('game-', ''));
 				}
 			});
 			return message.reply(`Can't find role ${args.tag}\nValid Choices:\n${validRoles.join(', ')}`);
@@ -57,19 +57,12 @@ export class GameCommand extends Commando.Command {
 		if (!role.name.toLowerCase().startsWith('game-')) {
 			return message.reply('Cheeky.')
 		}
-		if (currentRoles.find(elem => elem === role)) {
+		if (currentRoles.find(elem => elem.id === role.id)) {
 			return newRoles.remove(role)
 				.then(() => {
-					const editData = {roles: newRoles};
 					console.log(`Removing ${role.name} from ${message.author.tag}`);
-					return message.member.edit(editData)
-						.then(() => {
-							console.log('Done.');
-							return message.reply(`${role.name} removed from ${message.author.tag}`);
-						}).catch(err => {
-							console.error(err);
-							Raven.captureException(err);
-						});
+					console.log('Done.');
+					return message.reply(`${role.name} removed from ${message.author.tag}`);
 				})
 				.catch(err => {
 					console.error(err);
@@ -79,16 +72,9 @@ export class GameCommand extends Commando.Command {
 		}
 		return newRoles.add(role)
 			.then(() => {
-				const editData = {roles: newRoles};
 				console.log(`Giving ${role.name} to ${message.author.tag}`);
-				message.member.edit(editData)
-					.then(() => {
-						console.log('Done.');
-						return message.reply(`${role.name} added to ${message.author.tag}`);
-					}).catch(err => {
-					console.error(err);
-					Raven.captureException(err);
-				});
+				console.log('Done.');
+				return message.reply(`${role.name} added to ${message.author.tag}`);
 			}).catch(err => {
 				console.error(err);
 				Raven.captureException(err);
