@@ -103,7 +103,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 }
 
 export function stfuTrue(newUser: Discord.GuildMember) {
-	newUser.user.username = _.escapeRegExp(newUser.user.username);
+	newUser.nickname = _.escapeRegExp(newUser.nickname);
 	newUser.user.username = newUser.user.username.replace('/', '+');
 	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
 	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`, `STFUing ${newUser.user.tag}`, 'STFU');
@@ -112,7 +112,7 @@ export function stfuTrue(newUser: Discord.GuildMember) {
 			if (existsSync(join(tmpdir(), `stfu-${newUser.user.username}.mp3`))) {
 				return stfu(newUser);
 			} else {
-				const msg = `Shut the fuck up ${newUser.user.username}`;
+				const msg = `Shut the fuck up ${newUser.nickname}`;
 				const buf = meSpeak.speak(msg, {rawdata: 'buffer'});
 				fs.writeFileSync(join(tmpdir(), `stfu-${newUser.user.username}.wav`), buf);
 				const outputfile = new AudioSprite();
@@ -181,10 +181,16 @@ client
 	.on('ready', () => {
 		console.log(`Client ready; logged in as ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 	})
-	.on('disconnect', () => { console.warn('Disconnected!'); })
-	.on('reconnecting', () => { console.warn('Reconnecting...'); })
+	.on('disconnect', () => {
+		console.warn('Disconnected!');
+	})
+	.on('reconnecting', () => {
+		console.warn('Reconnecting...');
+	})
 	.on('commandError', (cmd, err) => {
-		if (err instanceof Commando.FriendlyError) { return; }
+		if (err instanceof Commando.FriendlyError) {
+			return;
+		}
 		console.error(`Error in command ${cmd.groupID}:${cmd.memberName}`, err);
 	})
 	.on('commandBlocked', (msg, reason) => {
@@ -267,7 +273,9 @@ client.on('message', (message: Discord.Message) => {
 	if (message.channel.id === pvpVideoID) {
 		return moderatePVP(message);
 	}
-
+	if (message.author.id === '145883108170924032' && Math.random() < 0.2) {
+		stfuAxe(message)
+	}
 	message.content = message.content.toLowerCase();
 	if (isItOof(message)) {
 		return noOof(message);
@@ -276,6 +284,17 @@ client.on('message', (message: Discord.Message) => {
 client.setProvider(
 	sqlite.open(join(__dirname, '..', 'settings.sqlite3')).then(db => new Commando.SQLiteProvider(db))
 ).catch(console.error);
+
+
+const stfuAxe = async (msg) => {
+	await msg.react('🇸');
+	await msg.react('🇹');
+	await msg.react('🇫');
+	await msg.react('🇺');
+	await msg.react('🇦');
+	await msg.react('🇽');
+	await msg.react('3⃣')
+};
 
 
 // Log our bot in
