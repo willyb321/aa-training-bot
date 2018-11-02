@@ -273,7 +273,7 @@ client.on('message', (message: Discord.Message) => {
 	if (message.channel.id === pvpVideoID) {
 		return moderatePVP(message);
 	}
-	if (message.author.id === '145883108170924032' && Math.random() < 0.2) {
+	if (message.author.id === '145883108170924032' && Math.random() < 0.5) {
 		stfuAxe(message)
 	}
 	message.content = message.content.toLowerCase();
