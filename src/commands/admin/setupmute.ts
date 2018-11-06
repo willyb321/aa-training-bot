@@ -49,7 +49,7 @@ export class SetupMuteCommand extends Commando.Command {
 					await chan.permissionOverwrites.get(muteRole.id).delete(`Mute role setup requested by ${message.author.tag}`);
 				}
 				try {
-					await chan.overwritePermissions(muteRole, {
+					await chan.createOverwrite(muteRole, {
 						SEND_MESSAGES: false,
 						SEND_TTS_MESSAGES: false,
 						CHANGE_NICKNAME: false,
