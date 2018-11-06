@@ -20,7 +20,7 @@
     "bufferutil": "^3.0.3",
     "common-tags": "^1.7.2",
     "compromise": "^11.3.0",
-    "discord.js": "github:discordjs/discord.js#acd1740f0b44064a0df0e4eecb5340af35869f72",
+    "discord.js": "github:discordjs/discord.js#3d8207a3db2e555930d4bf809fe1bc98ec9cb348",
     "discord.js-commando": "github:discordjs/commando#eec0ca5dd5ccaa6ea8bcd45bc9f1058c3d847485",
     "erlpack": "github:hammerandchisel/erlpack",
     "ffmpeg-binaries": "^3.2.2-3",
