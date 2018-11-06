@@ -5,6 +5,7 @@
  * ignore
  */
 import * as Commando from 'discord.js-commando';
+import {GuildChannel} from "discord.js";
 
 
 export class SetupMuteCommand extends Commando.Command {
@@ -43,7 +44,8 @@ export class SetupMuteCommand extends Commando.Command {
 			}
 		}
 
-		for (const chan of message.guild.channels.array()) {
+		for (let chan of message.guild.channels.array()) {
+			chan = chan as GuildChannel;
 			if (chan) {
 				if (chan.permissionOverwrites && chan.permissionOverwrites.get(muteRole.id)) {
 					await chan.permissionOverwrites.get(muteRole.id).delete(`Mute role setup requested by ${message.author.tag}`);
