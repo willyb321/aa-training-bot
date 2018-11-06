@@ -147,7 +147,7 @@ function stfu(newUser: Discord.GuildMember) {
 				.catch(err => {
 					Raven.captureException(err);
 				});
-			const voiceDis = voice.playFile(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
+			const voiceDis = voice.play(join(tmpdir(), `stfu-${newUser.user.username}.mp3`), {
 				bitrate: 10000,
 				passes: 1
 			});
