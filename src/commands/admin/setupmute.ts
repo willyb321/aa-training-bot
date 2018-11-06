@@ -30,9 +30,11 @@ export class SetupMuteCommand extends Commando.Command {
 		if (!muteRole) {
 			try {
 				muteRole = await message.guild.roles.create({
-					name: 'Muted',
-					color: 'DARKER_GREY',
-					mentionable: false
+					data: {
+						name: 'Muted',
+						color: 'DARKER_GREY',
+						mentionable: false
+					}
 				});
 				await message.guild.settings.set('muteRole', muteRole.id);
 			} catch (err) {
