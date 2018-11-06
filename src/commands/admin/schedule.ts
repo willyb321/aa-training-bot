@@ -200,7 +200,7 @@ export class GetScheduleCommand extends Commando.Command {
 	async run(message, args) {
 		return Schedule.find({})
 			.then(docs => {
-				const embed = new Discord.MessageEmbed({});
+				const embed = new Discord.MessageEmbed({}, null);
 				embed
 					.setTitle('Ainsley Schedule')
 					.setAuthor('Ainsley', 'https://willb.info/i/face45a7d6378b600bda26bf69e531d7')
