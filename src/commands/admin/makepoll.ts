@@ -33,7 +33,8 @@ async function setup(elem) {
 	if (!channel) {
 		return;
 	}
-	const msg = await channel.messages.fetch(elem.msgID);
+	// const msg = await channel.messages.fetch(elem.msgID);
+	let msg
 	if (!msg) {
 		return;
 	}
