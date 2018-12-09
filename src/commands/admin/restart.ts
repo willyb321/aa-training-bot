@@ -33,13 +33,7 @@ export class RestartCommand extends Commando.Command {
 		return message.channel.send(':wave:')
 			.then(() => {
 				client.destroy()
-					.then(() => {
-						process.exit(0);
-					})
-					.catch(err => {
-						Raven.captureException(err);
-						process.exit(1);
-					});
+				process.exit(0);
 			}).catch(err => {
 			Raven.captureException(err);
 			process.exit(1);

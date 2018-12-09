@@ -6,7 +6,7 @@
  */
 import * as Discord from 'discord.js';
 import {client} from '../../index';
-import {config} from '../../utils';
+import {config, announcements, ISchedule, announce, Schedule} from '../../utils';
 import * as mongoose from 'mongoose';
 import * as later from 'later';
 import * as Raven from 'raven';
@@ -15,54 +15,11 @@ import * as autoIncrement from 'mongoose-auto-increment';
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
-export const announcements = [];
 
-mongoose.connect(config.mongoURL);
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
-	console.log('Mongo connected!');
-});
-autoIncrement.initialize(db);
 
-const scheduleSchema = new mongoose.Schema({
-	timeExpression: String,
-	message: String,
-	channelId: String,
-	everyone: Boolean
-});
 
-export interface ISchedule extends mongoose.Document {
-	timeExpression: string;
-	message: string;
-	channelId: string;
-	everyone: boolean;
-}
 
-scheduleSchema.plugin(autoIncrement.plugin, 'Schedule');
-const Schedule = mongoose.model('Schedule', scheduleSchema);
 
-export function addAllAnnouncementsToMemory() {
-	Schedule.find({}, (err, docs) => {
-		if (err) {
-			Raven.captureException(err);
-		} else {
-			docs.forEach((elem: ISchedule) => {
-				const parsedTime = later.parse.text(elem.timeExpression);
-				announcements[elem._id] = later.setInterval(() => {
-					announce(elem.message, elem.channelId, elem.everyone);
-				}, parsedTime);
-			});
-		}
-	});
-}
-
-function announce(message: string, channelId: string, everyone: boolean) {
-	return undefined
-	// console.log('Announcing!');
-	// const channel = client.guilds.get(config.paradigmID).channels.get(channelId);
-	// channel.send(`${message.toString()}\n${everyone ? '@everyone' : ''}`);
-}
 
 import * as Commando from 'discord.js-commando';
 

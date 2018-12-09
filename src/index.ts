@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 import * as meSpeak from 'mespeak';
 import * as Raven from 'raven';
 import * as AudioSprite from 'audiosprite-pkg';
-import {botLog, checkCurrentPolls, config, currentStatus, isItOof, noOof} from './utils';
+import {botLog, checkCurrentPolls, config, currentStatus, isItOof, noOof, addAllAnnouncementsToMemory} from './utils';
 import {join} from 'path';
 import * as fs from 'fs';
 import {tmpdir} from 'os';
@@ -75,7 +75,7 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 		return;
 	}
 	const now = Math.floor(Date.now());
-	if (!joined && newUser.voiceChannel !== undefined) {
+	if (!joined && newUser.voice.channel !== undefined) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
 			console.log(`Not STFUing since ${config.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
@@ -88,10 +88,10 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 	if (Math.random() < 0.95) {
 		return;
 	}
-	if (newUser.voiceChannel === undefined) {
+	if (newUser.voice.channel === undefined) {
 		return;
 	}
-	if (oldUser.voiceChannel === undefined && newUser.voiceChannel !== undefined && !currentStatus.inVoice) {
+	if (oldUser.voice.channel === undefined && newUser.voice.channel !== undefined && !currentStatus.inVoice) {
 		if (currentStatus.lastStfu && now - currentStatus.lastStfu <= config.stfuInterval) {
 			console.log(`Not STFUing since ${config.stfuInterval / 1000} seconds have not passed since the last one. (${now - currentStatus.lastStfu})`);
 			return;
@@ -105,10 +105,10 @@ export function stfuInit(oldUser: Discord.GuildMember, newUser: Discord.GuildMem
 export function stfuTrue(newUser: Discord.GuildMember) {
 	newUser.nickname = _.escapeRegExp(newUser.nickname);
 	newUser.user.username = newUser.user.username.replace('/', '+');
-	console.log(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`);
-	botLog(`Joining ${newUser.voiceChannel.name} to tell ${newUser.user.username} to STFU`, `STFUing ${newUser.user.tag}`, 'STFU');
+	console.log(`Joining ${newUser.voice.channel.name} to tell ${newUser.user.username} to STFU`);
+	botLog(`Joining ${newUser.voice.channel.name} to tell ${newUser.user.username} to STFU`, `STFUing ${newUser.user.tag}`, 'STFU');
 	setTimeout(() => {
-		if (newUser.voiceChannel) {
+		if (newUser.voice.channel) {
 			if (existsSync(join(tmpdir(), `stfu-${newUser.user.username}.mp3`))) {
 				return stfu(newUser);
 			} else {
@@ -135,10 +135,10 @@ export function stfuTrue(newUser: Discord.GuildMember) {
 }
 
 function stfu(newUser: Discord.GuildMember) {
-	if (!newUser || !newUser.voiceChannel) {
+	if (!newUser || !newUser.voice.channel) {
 		return;
 	}
-	newUser.voiceChannel.join()
+	newUser.voice.channel.join()
 		.then(voice => {
 			newUser.guild.members.get(client.user.id).setMute(false, 'Nah.')
 				.then(() => {
@@ -231,7 +231,7 @@ client.on('ready', () => {
 		.catch(err => {
 			Raven.captureException(err);
 		});
-	Admin.addAllAnnouncementsToMemory();
+	addAllAnnouncementsToMemory();
 	checkCurrentPolls()
 });
 

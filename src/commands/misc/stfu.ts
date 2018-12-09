@@ -4,37 +4,16 @@
 /**
  * ignore
  */
-import * as Discord from 'discord.js';
 import {stfuInit, client} from '../../index';
 import {join} from 'path';
-import {currentStatus, config} from '../../utils';
+import {currentStatus, config, stfu} from '../../utils';
 import * as Raven from 'raven';
 
 Raven.config(config.ravenDSN, {
 	autoBreadcrumbs: true
 }).install();
 
-export function stfu(message: Discord.Message) {
-	if (!message || !message.mentions) {
-		return;
-	}
-	const user = message.mentions.members.first();
-	if (currentStatus.inVoice) {
-		return;
-	}
-	if (!user) {
-		return;
-	}
-	if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voiceChannel) {
-		console.log('Doing it!');
-		stfuInit(user, user);
-		return;
-	}
-	if (!user.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
-		message.channel.send(`STFU ${user.toString()}!`);
-		return;
-	}
-}
+
 
 import * as Commando from 'discord.js-commando';
 
@@ -74,12 +53,12 @@ export class StfuCommand extends Commando.Command {
 		if (!user) {
 			return;
 		}
-		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voiceChannel) {
+		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voice.channel) {
 			console.log('Doing it!');
 			stfuInit(user, user);
 			return;
 		}
-		if (!user.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!user.voice.channel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return message.channel.send(`STFU ${user.toString()}!`);
 		}
 	}
@@ -129,17 +108,17 @@ export class MeatCommand extends Commando.Command {
 			console.log('Not STFUing.');
 			return;
 		}
-		if (!newUser.voiceChannel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		if (!newUser.voice.channel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
 			return;
 		}
 		if (currentStatus.inVoice) {
 			return;
 		}
-		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && newUser.voiceChannel) {
+		if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && newUser.voice.channel) {
 			console.log('Doing it!');
 			currentStatus.lastStfu = Math.floor(Date.now());
 			currentStatus.inVoice = true;
-			return newUser.voiceChannel.join()
+			return newUser.voice.channel.join()
 				.then(voice => {
 					const voiceDis = voice.play(join(__dirname, '..', '..', '..', 'meat.mp3'), {
 						bitrate: 10000,

@@ -5,13 +5,67 @@
  * ignore
  */
 import * as Discord from 'discord.js';
-import {client} from './index';
+import {client, stfuInit} from './index';
 import * as Raven from 'raven';
+import * as later from 'later';
 import * as _ from 'lodash';
 import {config} from './config';
 import * as mongoose from "mongoose";
 import * as autoIncrement from "mongoose-auto-increment";
 export {config} from './config';
+
+export const announcements = [];
+mongoose.connect(config.mongoURL);
+export interface ISchedule extends mongoose.Document {
+	timeExpression: string;
+	message: string;
+	channelId: string;
+	everyone: boolean;
+}
+
+export function announce(message: string, channelId: string, everyone: boolean) {
+	return undefined
+	// console.log('Announcing!');
+	// const channel = client.guilds.get(config.paradigmID).channels.get(channelId);
+	// channel.send(`${message.toString()}\n${everyone ? '@everyone' : ''}`);
+}
+
+export function stfu(message: Discord.Message) {
+	if (!message || !message.mentions) {
+		return;
+	}
+	const user = message.mentions.members.first();
+	if (currentStatus.inVoice) {
+		return;
+	}
+	if (!user) {
+		return;
+	}
+	if (message.member.roles.find(elem => config.allowedRoles.includes(elem.id)) && user.voice.channel) {
+		console.log('Doing it!');
+		stfuInit(user, user);
+		return;
+	}
+	if (!user.voice.channel && message.member.roles.find(elem => config.allowedRoles.includes(elem.id))) {
+		message.channel.send(`STFU ${user.toString()}!`);
+		return;
+	}
+}
+
+export function addAllAnnouncementsToMemory() {
+	Schedule.find({}, (err, docs) => {
+		if (err) {
+			Raven.captureException(err);
+		} else {
+			docs.forEach((elem: ISchedule) => {
+				const parsedTime = later.parse.text(elem.timeExpression);
+				announcements[elem._id] = later.setInterval(() => {
+					announce(elem.message, elem.channelId, elem.everyone);
+				}, parsedTime);
+			});
+		}
+	});
+}
 
 const replies = ['nah m90', 'uwot', 'k', 'meh'];
 const oofs = ['oof', '00f', '0of', 'o0f', 'Oоf', '()()|=', 'οοf', 'Ооf', 'ооf'];
@@ -94,13 +148,27 @@ export function botLog(message: string, title: string, event: string, channelId?
 		channel.send({embed});
 	}
 }
-mongoose.connect(config.mongoURL);
+
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', () => {
 	console.log('Mongo connected!');
 });
 autoIncrement.initialize(db);
+
+
+const scheduleSchema = new mongoose.Schema({
+	timeExpression: String,
+	message: String,
+	channelId: String,
+	everyone: Boolean
+});
+
+
+
+scheduleSchema.plugin(autoIncrement.plugin, 'Schedule');
+export const Schedule = mongoose.model('Schedule', scheduleSchema);
+
 
 const pollSchema = new mongoose.Schema({
 	msgID: String,
